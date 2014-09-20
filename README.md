@@ -20,7 +20,7 @@ Team Member
 * Xiumei Lu <sammiexiu@gmail.com>
 * Qi Cao <caoqisd@gmail.com>
 * Jennifer Wu <jenn.j.wu@gmail.com>
-* Wenjia ZHANG <wenjiazhang519@gmail.com>
+* Wenjia Zhang <wenjiazhang519@gmail.com>
 
 License
 ----
