@@ -1,7 +1,7 @@
-Gumball-Machine-jME3
+Gumball Machine in jME3
 ====================
 
-CMPE 202 project, use jMonkeyEngine to create 3D gumball machine game.
+CMPE 202 group project using jMonkeyEngine to create 3D gumball machine game.
 
 > CMPE 202 team project (Fall 2014)
 > at San Jose State University
