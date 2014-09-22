@@ -1,21 +1,25 @@
-Gumball Machine in jME3
-====================
+3D Gumball Machine in jME
+=========
 
-CMPE 202 group project using jMonkeyEngine to create 3D gumball machine game.
+CMPE 202 (Fall 2014) group project at San Jose State University
 
-> CMPE 202 team project (Fall 2014)
-> at San Jose State University
- - Team 6 project
- - Field: 3D Game 
- - Title: Gumball Machine
+  - Team 6
+  - Field: Game Development - 3D
+  - Title: 3D Gumball Machine
 
 Directory
 -----------
- - Design: Product documentation Link
- - src:	source code
- 
-Team Member
---------------
+ - src/mygame: game source code
+ - src/mygame/experiments: jME experiments
+
+Tech
+-----------
+This work uses a number of open source projects to work properly:
+* [jMonkeyEngine] - Java openGL 3D game engine
+* [Blender3D] - open source 3D graphics and animation software
+
+Team Members
+-----------
 * Xiaoli Jiang <jiangxiaoli1104@gmail.com>
 * Xiumei Lu <sammiexiu@gmail.com>
 * Qi Cao <caoqisd@gmail.com>
@@ -24,6 +28,4 @@ Team Member
 
 License
 ----
-
 MIT
-
