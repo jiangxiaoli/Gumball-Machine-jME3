@@ -14,17 +14,17 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.control.Control;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.scene.shape.Sphere.TextureMode;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
  
-/*Adapted from example 12*/
-public class Main extends SimpleApplication {
+public class MainJenn extends SimpleApplication {
  
   public static void main(String args[]) {
-    Main app = new Main();
+    MainJenn app = new MainJenn();
     app.start();
   }
  
@@ -60,28 +60,39 @@ public class Main extends SimpleApplication {
     //bulletAppState.getPhysicsSpace().enableDebug(assetManager);
  
     /** Configure cam to look at scene */
-    cam.setLocation(new Vector3f(0, 2f, 10f));
-    cam.lookAt(new Vector3f(2, 2, 0), Vector3f.UNIT_Y);
+    cam.setLocation(new Vector3f(0, 2f, 12f));
+    cam.lookAt(new Vector3f(0, 2, 0), Vector3f.UNIT_Y);
     /** Add InputManager action: Left click triggers shooting. */
-    inputManager.addMapping("shoot", 
-            new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
-    inputManager.addListener(actionListener, "shoot");
+    //inputManager.addMapping("shoot", 
+            //new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+    //inputManager.addListener(actionListener, "shoot");
     
     /** create four colored boxes and a floor to shoot at: */
+    
     shootables = new Node("Shootables");
     rootNode.attachChild(shootables);
-    shootables.attachChild(makeCube("box1", -3f, 2f, 1f));
-    shootables.attachChild(makeCube("box2", 5f, 2f, 1f));
-    shootables.attachChild(makeCube("box3", 0f, 2f, 1f));
+    Geometry gM = makeCube("Gumball Machine", 0, 2f, 1f);    
+    gM.addControl((Control) new gumballMachine());
+    gM.getControl(gumballMachine.class).setCount(5);
+    
+    gM.setUserData("gCount", 5);
+    gM.getControl(gumballMachine.class).getCount();
+    shootables.attachChild(gM);
+    
+    
+    
+    //shootables.attachChild(makeCube("gumball machine", 0, 2f, 1f));
+    //shootables.attachChild(makeCube("box2", 5f, 2f, 1f));
+    //shootables.attachChild(makeCube("box3", 0f, 2f, 1f));
     //shootables.attachChild(makeCube("the Deputy", 1f, 0f, -4f));
     
-    shootables.attachChild(makeSphere("floating1", 2f, 8f, -3f));
-    shootables.attachChild(makeSphere("floating2", -5f, 5f, 2f));
+    //shootables.attachChild(makeSphere("floating1", 2f, 8f, -3f));
+    //shootables.attachChild(makeSphere("floating2", -5f, 5f, 2f));
     
     /** Initialize the scene, materials, and physics space */
     initMaterials();
     initFloor();
-    initCrossHairs();
+    //initCrossHairs();
     
     
   }
@@ -90,13 +101,13 @@ public class Main extends SimpleApplication {
    * Every time the shoot action is triggered, a new cannon ball is produced.
    * The ball is set up to fly from the camera position in the camera direction.
    */
-  private ActionListener actionListener = new ActionListener() {
+  /*private ActionListener actionListener = new ActionListener() {
     public void onAction(String name, boolean keyPressed, float tpf) {
       if (name.equals("shoot") && !keyPressed) {
         makeCannonBall();
       }
     }
-  };
+  };*/
   
    /** A cube object for target practice */
   protected Geometry makeCube(String name, float x, float y, float z) {
@@ -107,7 +118,7 @@ public class Main extends SimpleApplication {
     mat1.setColor("Color", ColorRGBA.randomColor());
     cube.setMaterial(mat1);
     
-    cube_phy = new RigidBodyControl(2f);
+    cube_phy = new RigidBodyControl(0.0f);
     cube.addControl(cube_phy);
     bulletAppState.getPhysicsSpace().add(cube_phy);
     
@@ -116,7 +127,7 @@ public class Main extends SimpleApplication {
   }
   
    /** A sphere object for target practice */
-  protected Geometry makeSphere(String name, float x, float y, float z) {
+  /*protected Geometry makeSphere(String name, float x, float y, float z) {
     Sphere sphere_ball = new Sphere(40, 150, 0.8f, true, false);
     sphere_ball.setTextureMode(TextureMode.Projected);
     Geometry balloon = new Geometry(name, sphere_ball);
@@ -126,17 +137,17 @@ public class Main extends SimpleApplication {
     balloon.setMaterial(mat1);
     balloon.setLocalTranslation(x,y,z);
     
-    /** Make the ball physcial with a mass > 0.0f */
+    // Make the ball physcial with a mass > 0.0f 
     ball_phy2 = new RigidBodyControl(1f);
     //ball_phy2.applyCentralForce(new Vector3f(0,400*10,0));
-    /** Add physical ball to physics space. */
+    // Add physical ball to physics space. 
     balloon.addControl(ball_phy2);
     bulletAppState.getPhysicsSpace().add(ball_phy2);
     
     return balloon;
       
       
-  }
+  }*/
   
  
   /** Initialize the materials used in this scene. */
@@ -171,24 +182,24 @@ public class Main extends SimpleApplication {
   /** This method creates one individual physical cannon ball.
    * By defaul, the ball is accelerated and flies
    * from the camera position in the camera direction.*/
-   public void makeCannonBall() {
-    /** Create a cannon ball geometry and attach to scene graph. */
+   /*public void makeCannonBall() {
+    // Create a cannon ball geometry and attach to scene graph.
     Geometry ball_geo = new Geometry("cannon ball", sphere);
     ball_geo.setMaterial(stone_mat);
     rootNode.attachChild(ball_geo);
-    /** Position the cannon ball  */
+    // Position the cannon ball  
     ball_geo.setLocalTranslation(cam.getLocation());
-    /** Make the ball physcial with a mass > 0.0f */
+    // Make the ball physcial with a mass > 0.0f 
     ball_phy = new RigidBodyControl(1f);
-    /** Add physical ball to physics space. */
+    // Add physical ball to physics space. 
     ball_geo.addControl(ball_phy);
     bulletAppState.getPhysicsSpace().add(ball_phy);
-    /** Accelerate the physcial ball to shoot it. */
+    // Accelerate the physcial ball to shoot it. 
     ball_phy.setLinearVelocity(cam.getDirection().mult(25));
-  }
+  }*/
  
   /** A plus sign used as crosshairs to help the player with aiming.*/
-  protected void initCrossHairs() {
+  /*protected void initCrossHairs() {
     guiNode.detachAllChildren();
     guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
     BitmapText ch = new BitmapText(guiFont, false);
@@ -198,5 +209,5 @@ public class Main extends SimpleApplication {
       settings.getWidth() / 2 - guiFont.getCharSet().getRenderedSize() / 3 * 2,
       settings.getHeight() / 2 + ch.getLineHeight() / 2, 0);
     guiNode.attachChild(ch);
-  }
+  }*/
 }
