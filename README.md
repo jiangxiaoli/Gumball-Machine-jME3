@@ -15,8 +15,8 @@ Directory
 Tech
 -----------
 This work uses a number of open source projects to work properly:
-* [jMonkeyEngine] - Java openGL 3D game engine
-* [Blender3D] - open source 3D graphics and animation software
+* [jMonkeyEngine](http://jmonkeyengine.org/) - Java openGL 3D game engine
+* [Blender3D](http://www.blender.org/) - open source 3D graphics and animation software
 
 Team Members
 -----------
