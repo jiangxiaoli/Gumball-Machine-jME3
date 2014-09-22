@@ -5,8 +5,6 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.control.AbstractControl;
 
-
-
 public class gumballMachine extends AbstractControl{
     public gumballMachine() {
         
@@ -17,8 +15,25 @@ public class gumballMachine extends AbstractControl{
     }
     
     public int getCount() {
-        System.out.println("Machine has " + spatial.getUserData("gCount") + " gumballs");
-        return spatial.getUserData("gCount");
+        return (Integer)spatial.getUserData("gCount");
+    }
+    
+    public void turnCrank() {
+        if (getCount() > 0) {
+            System.out.println("Crank turned!");
+            dispense();
+            System.out.println("Machine has " + spatial.getUserData("gCount") + " gumballs");
+        }
+        else {
+            System.out.println("Sorry, Gumball machine is out of gumballs!");
+        }
+        
+    }
+    
+    public void dispense() {
+        int count = getCount();
+        count--;
+        setCount(count);
     }
 
     @Override
@@ -32,8 +47,6 @@ public class gumballMachine extends AbstractControl{
 
     @Override
     protected void controlRender(RenderManager rm, ViewPort vp) {
-       
+       //controlRender code here
     }
-
-    
 }
