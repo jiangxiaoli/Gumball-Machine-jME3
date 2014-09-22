@@ -20,7 +20,7 @@ This work uses a number of open source projects to work properly:
 
 Team Members
 -----------
-* Xiaoli Jiang <jiangxiaoli1104@gmail.com>
+* Xiaoli Jiang <jiangxiaoli1104@gmail.com> - try merge
 * Xiumei Lu <sammiexiu@gmail.com>
 * Qi Cao <caoqisd@gmail.com>
 * Jennifer Wu <jenn.j.wu@gmail.com>
