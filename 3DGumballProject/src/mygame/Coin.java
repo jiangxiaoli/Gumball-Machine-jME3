@@ -5,11 +5,8 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.control.AbstractControl;
 
-public class gumballMachine extends AbstractControl{
-    public gumballMachine() {
-        
-    }
-    
+public class Coin extends AbstractControl{
+           
     public void setCount(int count) {
         spatial.setUserData("gCount",count);
     }
