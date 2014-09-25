@@ -191,8 +191,5 @@ public class MainSammie extends SimpleApplication {
        }
   };//end ActionListener
   
-  public void initCoin(){
-      Sphere coins = 
-  }
   
 }
