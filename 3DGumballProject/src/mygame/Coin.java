@@ -7,16 +7,13 @@ import com.jme3.scene.control.AbstractControl;
 
 public class Coin extends AbstractControl{
            
-    public void setCount(int count) {
+    public Coin(int value, int count){
+        spatial.setUserData("value", value);
         spatial.setUserData("cCount",count);
     }
     
     public int getCount() {
         return (Integer)spatial.getUserData("cCount");
-    }
-    
-    public void setValue(int value) {
-        spatial.setUserData("value", value);
     }
     
     public int getValue() {
