@@ -22,15 +22,22 @@ public class gumballMachine extends AbstractControl{
         if (getCount() > 0) {
             System.out.println("Crank turned!");
             dispense();
-            System.out.println("Machine has " + spatial.getUserData("gCount") + " gumballs");
+            System.out.println(spatial.getUserData("gCount") + " gumball(s) remaining");
         }
         else {
-            System.out.println("Sorry, Gumball machine is out of gumballs!");
+            System.out.println("Crank turned, but the gumball machine is out of gumballs!");
         }
-        
     }
     
-    public void dispense() {
+    public void refill(int gumballs) {
+        int amount = getCount();
+        amount+=gumballs;
+        spatial.setUserData("gCount", amount);
+        System.out.println("Refilling gumball machine..");
+        System.out.println("There are now " + amount + " gumballs in the machine!");
+    }
+    
+    private void dispense() {
         int count = getCount();
         count--;
         setCount(count);
@@ -49,5 +56,4 @@ public class gumballMachine extends AbstractControl{
     protected void controlRender(RenderManager rm, ViewPort vp) {
        //controlRender code here
     }
-    
 }
