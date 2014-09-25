@@ -8,29 +8,19 @@ import com.jme3.scene.control.AbstractControl;
 public class Coin extends AbstractControl{
            
     public void setCount(int count) {
-        spatial.setUserData("gCount",count);
+        spatial.setUserData("cCount",count);
     }
     
     public int getCount() {
-        return (Integer)spatial.getUserData("gCount");
+        return (Integer)spatial.getUserData("cCount");
     }
     
-    public void turnCrank() {
-        if (getCount() > 0) {
-            System.out.println("Crank turned!");
-            dispense();
-            System.out.println("Machine has " + spatial.getUserData("gCount") + " gumballs");
-        }
-        else {
-            System.out.println("Sorry, Gumball machine is out of gumballs!");
-        }
-        
+    public void setValue(int value) {
+        spatial.setUserData("value", value);
     }
     
-    public void dispense() {
-        int count = getCount();
-        count--;
-        setCount(count);
+    public int getValue() {
+        return (Integer)spatial.getUserData("value");
     }
 
     @Override
