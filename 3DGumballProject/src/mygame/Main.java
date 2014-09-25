@@ -11,6 +11,7 @@ import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
+import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Ray;
@@ -18,6 +19,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Sphere;
@@ -39,7 +41,8 @@ public class Main extends SimpleApplication {
   Material stone_mat;
   Material floor_mat;
   private Node shootables;
-  private Geometry gM, coinQ, coinN, coinD;  
+  private Geometry gM, coinQ, coinN, coinD, gBall;
+  //private Spatial testcoin;
   
   /** Prepare geometries and physical nodes for bricks and cannon balls. */
   private RigidBodyControl    ball_phy;
@@ -81,6 +84,7 @@ public class Main extends SimpleApplication {
     makeCoins();
     
     
+    
     /** Initialize the scene, materials, and physics space */
     initMaterials();
     initFloor();
@@ -100,20 +104,49 @@ public class Main extends SimpleApplication {
     }
   };*/
   
-  //sphere object for coins
-  protected Geometry makeSphere(String name, float x, float y, float z) {
-    Sphere aCoin = new Sphere(20, 20, 1);
-    Geometry myCoin = new Geometry(name,aCoin);
-    myCoin.setLocalTranslation(x, y, z);
+   protected Geometry makeSphere(String name, float x, float y, float z) {
+    Sphere sphere_ball = new Sphere(40, 150, 0.8f, true, false);
+    sphere_ball.setTextureMode(TextureMode.Projected);
+    Geometry balloon = new Geometry(name, sphere_ball);
     Material mat1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
     mat1.setColor("Color", ColorRGBA.randomColor());
-    myCoin.setMaterial(mat1);
+   
+    balloon.setMaterial(mat1);
+    balloon.setLocalTranslation(x,y,z);
     
-    ball_phy = new RigidBodyControl(0.0f);
-    myCoin.addControl(ball_phy);
+    /** Make the ball physcial with a mass > 0.0f */
+    ball_phy = new RigidBodyControl(1f);
+    //ball_phy2.applyCentralForce(new Vector3f(0,400*10,0));
+    /** Add physical ball to physics space. */
+    balloon.addControl(ball_phy);
     bulletAppState.getPhysicsSpace().add(ball_phy);
     
-    return myCoin;
+    return balloon;
+      
+      
+  }
+   
+  protected Geometry makeGumball(String name, float x, float y, float z, ColorRGBA color) {
+    Sphere sphere_ball = new Sphere(40, 150, 0.8f, true, false);
+    sphere_ball.setTextureMode(TextureMode.Projected);
+    Geometry gumball = new Geometry(name, sphere_ball);
+    Material mat1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+    
+    mat1.setColor("Color", color);
+   
+    gumball.setMaterial(mat1);
+    gumball.setLocalTranslation(x,y,z);
+    
+    /** Make the ball physcial with a mass > 0.0f */
+    ball_phy = new RigidBodyControl(1f);
+    //ball_phy2.applyCentralForce(new Vector3f(0,400*10,0));
+    /** Add physical ball to physics space. */
+    gumball.addControl(ball_phy);
+    bulletAppState.getPhysicsSpace().add(ball_phy);
+    
+    return gumball;
+      
+  
   }
   
   
@@ -135,7 +168,18 @@ public class Main extends SimpleApplication {
   
   //make 3 coins - 1 qtr, 1 nickel, 1 dime
   public void makeCoins() {
-    coinQ = makeSphere("Quarter", -5, 3, 5);
+    /*Spatial testcoin = assetManager.loadModel("Models/Coin/Coin.mesh.xml");
+    testcoin.scale(1f, 1f, 1f);
+    testcoin.rotate(0.0f, -3.0f, 0.0f);
+    testcoin.setLocalTranslation(0.0f, 0f, 0f);
+    shootables.attachChild(testcoin);
+        
+    // You must add a light to make the model visible
+    DirectionalLight sun = new DirectionalLight();
+    sun.setDirection(new Vector3f(-0.1f, -0.7f, -1.0f));
+    shootables.addLight(sun);*/
+      
+    /*coinQ = makeSphere("Quarter", -5, 3, 5);
     coinQ.addControl((Control) new Coin());
     coinQ.getControl(Coin.class).setValue(25);
     coinQ.getControl(Coin.class).setCount(1);
@@ -152,8 +196,18 @@ public class Main extends SimpleApplication {
     coinD.getControl(Coin.class).setValue(10);
     coinD.getControl(Coin.class).setCount(1);
     shootables.attachChild(coinD);
+    */
     
-    
+  }
+  
+  public void makeGumball() {
+      ColorRGBA Red = new ColorRGBA(1,0,0,1);//red
+      gBall = makeGumball("gumball", 0, 3, 8, Red);
+      gBall.addControl((Control) new gumball());
+      gBall.getControl(gumball.class).setColor("red");
+      gBall.getControl(gumball.class).setValue(5);
+      shootables.attachChild(gBall);
+      
   }
  
   /** Initialize the materials used in this scene. */
@@ -228,6 +282,7 @@ public class Main extends SimpleApplication {
                 if ("Gumball Machine".equals(results.getCollision(0).getGeometry().getName())){
                     gM.getControl(gumballMachine.class).turnCrank();
                     gM.getControl(gumballMachine.class).getCount();
+                    makeGumball();
                 }
                 else if ("Quarter".equals(results.getCollision(0).getGeometry().getName()) 
                         || "Dime".equals(results.getCollision(0).getGeometry().getName())
@@ -235,6 +290,12 @@ public class Main extends SimpleApplication {
                     System.out.print("Coin is worth ");
                     System.out.print(results.getCollision(0).getGeometry().getUserData("value"));
                     System.out.println(" cents");
+                }
+                else if ("gumball".equals(results.getCollision(0).getGeometry().getName())){
+                    System.out.print("Gumball has color ");
+                    System.out.print(results.getCollision(0).getGeometry().getUserData("color"));
+                    System.out.print(" and value of ");
+                    System.out.println(results.getCollision(0).getGeometry().getUserData("value"));
                 }
             }
             
