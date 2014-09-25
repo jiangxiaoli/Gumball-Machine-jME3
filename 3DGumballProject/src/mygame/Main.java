@@ -136,15 +136,21 @@ public class Main extends SimpleApplication {
   //make 3 coins - 1 qtr, 1 nickel, 1 dime
   public void makeCoins() {
     coinQ = makeSphere("Quarter", -5, 3, 5);
-    coinQ.addControl((Control) new Coin(25, 1));
+    coinQ.addControl((Control) new Coin());
+    coinQ.getControl(Coin.class).setValue(25);
+    coinQ.getControl(Coin.class).setCount(1);
     shootables.attachChild(coinQ);
     
     coinN = makeSphere("Nickel", 3, 3, 5);
-    coinN.addControl((Control) new Coin(5, 1));
+    coinN.addControl((Control) new Coin());
+    coinN.getControl(Coin.class).setValue(5);
+    coinN.getControl(Coin.class).setCount(1);
     shootables.attachChild(coinN);
     
     coinD = makeSphere("Dime", 6, 4, 5);
-    coinD.addControl((Control) new Coin(10, 1));
+    coinD.addControl((Control) new Coin());
+    coinD.getControl(Coin.class).setValue(10);
+    coinD.getControl(Coin.class).setCount(1);
     shootables.attachChild(coinD);
     
     
