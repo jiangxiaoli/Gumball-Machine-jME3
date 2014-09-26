@@ -33,6 +33,10 @@ public class Main extends SimpleApplication {
   public static void main(String args[]) {
     Main app = new Main();
     app.start();
+    
+    /** Disable the default scene graph statistics */
+    app.setDisplayStatView(false); 
+    app.setDisplayFps(false);
   }
  
   /** Prepare the Physics Application State (jBullet) */
