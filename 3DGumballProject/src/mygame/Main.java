@@ -26,7 +26,7 @@ import com.jme3.scene.shape.Sphere;
 import com.jme3.scene.shape.Sphere.TextureMode;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
-import java.util.Set;
+
  
 public class Main extends SimpleApplication {
  
@@ -63,6 +63,9 @@ public class Main extends SimpleApplication {
  
   @Override
   public void simpleInitApp() {
+    ColorRGBA background_blue = new ColorRGBA(.1f,.5f,1,1);
+    viewPort.setBackgroundColor(background_blue);
+    
     /** Set up Physics Game */
     bulletAppState = new BulletAppState();
     stateManager.attach(bulletAppState);
@@ -159,47 +162,54 @@ public class Main extends SimpleApplication {
     shootables.attachChild(gM);
   }
   
-  //make 3 coins - 1 qtr, 1 nickel, 1 dime
+  //make 20 coins
   public void makeCoins() {
-    Spatial Quarter = assetManager.loadModel("Models/SilverCoin/SilverCoin.mesh.xml");
-    Quarter.setName("Quarter");
-    Quarter.scale(1f, 1f, 1f);
-    Quarter.rotate(2f, -3.0f, 0.0f);
-    Quarter.setLocalTranslation(5f, 2f, 0f);
-    Quarter.addControl((Control) new Coin());
-    Quarter.getControl(Coin.class).setValue(25);
-    Quarter.getControl(Coin.class).setCount(1);
-    shootables.attachChild(Quarter);
-    
-    Spatial Nickel = assetManager.loadModel("Models/SilverCoin/SilverCoin.mesh.xml");
-    Nickel.setName("Nickel");
-    Nickel.scale(0.8f, 0.8f, 0.8f);
-    Nickel.rotate(2f, -3.0f, 0.0f);
-    Nickel.setLocalTranslation(3f, 2f, 0f);
-    Nickel.addControl((Control) new Coin());
-    Nickel.getControl(Coin.class).setValue(5);
-    Nickel.getControl(Coin.class).setCount(1);
-    shootables.attachChild(Nickel);
-    
-    Spatial Dime = assetManager.loadModel("Models/SilverCoin/SilverCoin.mesh.xml");
-    Dime.setName("Dime");
-    Dime.scale(0.5f, 0.5f, 0.5f);
-    Dime.rotate(2f, -3.0f, 0.0f);
-    Dime.setLocalTranslation(3f, 4f, 0f);
-    Dime.addControl((Control) new Coin());
-    Dime.getControl(Coin.class).setValue(10);
-    Dime.getControl(Coin.class).setCount(1);
-    shootables.attachChild(Dime);
-    
-    Spatial Penny = assetManager.loadModel("Models/BrownCoin/BrownCoin.mesh.xml");
-    Penny.setName("Penny");
-    Penny.scale(0.5f, 0.5f, 0.5f);
-    Penny.rotate(2f, -3.0f, 0.0f);
-    Penny.setLocalTranslation(5f, 4f, 0f);
-    Penny.addControl((Control) new Coin());
-    Penny.getControl(Coin.class).setValue(1);
-    Penny.getControl(Coin.class).setCount(1);
-    shootables.attachChild(Penny);    
+    //making 5x each coin
+    int j = 3;
+    int k = -3;
+    for (int i = 0; i < 5; i++) {
+        Spatial Quarter = assetManager.loadModel("Models/SilverCoin/SilverCoin.mesh.xml");
+        Quarter.setName("Quarter");
+        Quarter.scale(1f, 1f, 1f);
+        Quarter.rotate(2f, -3.0f, 0.0f);
+        Quarter.setLocalTranslation(j, 2, 0);
+        Quarter.addControl((Control) new Coin());
+        Quarter.getControl(Coin.class).setValue(25);
+        Quarter.getControl(Coin.class).setCount(1);
+        shootables.attachChild(Quarter);
+        
+        Spatial Nickel = assetManager.loadModel("Models/SilverCoin/SilverCoin.mesh.xml");
+        Nickel.setName("Nickel");
+        Nickel.scale(0.8f, 0.8f, 0.8f);
+        Nickel.rotate(2f, -3.0f, 0.0f);
+        Nickel.setLocalTranslation(k, 2, 0);
+        Nickel.addControl((Control) new Coin());
+        Nickel.getControl(Coin.class).setValue(5);
+        Nickel.getControl(Coin.class).setCount(1);
+        shootables.attachChild(Nickel);
+        
+        Spatial Dime = assetManager.loadModel("Models/SilverCoin/SilverCoin.mesh.xml");
+        Dime.setName("Dime");
+        Dime.scale(0.5f, 0.5f, 0.5f);
+        Dime.rotate(2f, -3.0f, 0.0f);
+        Dime.setLocalTranslation(j, 4, 0);
+        Dime.addControl((Control) new Coin());
+        Dime.getControl(Coin.class).setValue(10);
+        Dime.getControl(Coin.class).setCount(1);
+        shootables.attachChild(Dime);
+        
+        Spatial Penny = assetManager.loadModel("Models/BrownCoin/BrownCoin.mesh.xml");
+        Penny.setName("Penny");
+        Penny.scale(0.5f, 0.5f, 0.5f);
+        Penny.rotate(2f, -3.0f, 0.0f);
+        Penny.setLocalTranslation(k, 4, 0);
+        Penny.addControl((Control) new Coin());
+        Penny.getControl(Coin.class).setValue(1);
+        Penny.getControl(Coin.class).setCount(1);
+        shootables.attachChild(Penny);   
+        j+=2;
+        k-=2;
+    }
    
     // You must add a light to make the model visible
     DirectionalLight sun = new DirectionalLight();
@@ -304,16 +314,22 @@ public class Main extends SimpleApplication {
                     //System.out.print(s.getUserData("value"));
                     //System.out.println(" cent(s)");
                     gM.getControl(gumballMachine.class).acceptCoin((Integer)s.getUserData("value"));
+                    //remove coin from scene
                     shootables.detachChild(s);
                     System.out.print("Machine has: ");
                     System.out.print(gM.getControl(gumballMachine.class).getAmtInSlot());
                     System.out.println(" cent(s)");
                 }
                 else if ("gumball".equals(results.getCollision(0).getGeometry().getName())){
+                    System.out.println("Taking gumball...");
                     System.out.print("Gumball has color ");
                     System.out.print(results.getCollision(0).getGeometry().getUserData("color"));
                     System.out.print(" and value of ");
                     System.out.println(results.getCollision(0).getGeometry().getUserData("value"));
+                    //remove gumball from scene
+                    bulletAppState.getPhysicsSpace().remove(ball_phy);
+                    results.getCollision(0).getGeometry().removeFromParent();
+                    shootables.detachChild(results.getCollision(0).getGeometry());
                 }
             }
             
