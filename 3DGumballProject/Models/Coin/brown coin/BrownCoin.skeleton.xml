@@ -68,18 +68,18 @@
     </bone>
   </bones>
   <bonehierarchy >
-    <boneparent bone="B_Pivot" parent="B_MasterPosControl" />
-    <boneparent bone="B_Angle" parent="B_MasterPosControl" />
-    <boneparent bone="B_AngleSetRot" parent="B_Angle" />
-    <boneparent bone="B_ObjectRotControl" parent="B_MasterPosControl" />
-    <boneparent bone="B_AngleMeasurePosBottom" parent="B_MasterPosControl" />
-    <boneparent bone="B_DeformerBone" parent="B_MasterPosControl" />
-    <boneparent bone="B_PivotControl" parent="B_MasterPosControl" />
-    <boneparent bone="B_AngleControl" parent="B_MasterPosControl" />
-    <boneparent bone="B_ObjectSpin" parent="B_MasterPosControl" />
+    <boneparent parent="B_MasterPosControl" bone="B_Pivot" />
+    <boneparent parent="B_MasterPosControl" bone="B_Angle" />
+    <boneparent parent="B_Angle" bone="B_AngleSetRot" />
+    <boneparent parent="B_MasterPosControl" bone="B_ObjectRotControl" />
+    <boneparent parent="B_MasterPosControl" bone="B_AngleMeasurePosBottom" />
+    <boneparent parent="B_MasterPosControl" bone="B_DeformerBone" />
+    <boneparent parent="B_MasterPosControl" bone="B_PivotControl" />
+    <boneparent parent="B_MasterPosControl" bone="B_AngleControl" />
+    <boneparent parent="B_MasterPosControl" bone="B_ObjectSpin" />
   </bonehierarchy>
   <animations >
-    <animation name="my_animation" length="4.166666666666667" >
+    <animation length="4.166666666666667" name="my_animation" >
       <tracks >
         <track bone="B_MasterPosControl" >
           <keyframes >
