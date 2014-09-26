@@ -26,6 +26,7 @@ import com.jme3.scene.shape.Sphere;
 import com.jme3.scene.shape.Sphere.TextureMode;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
+import java.util.Set;
  
 public class Main extends SimpleApplication {
  
@@ -41,7 +42,7 @@ public class Main extends SimpleApplication {
   Material stone_mat;
   Material floor_mat;
   private Node shootables;
-  private Geometry gM, coinQ, coinN, coinD, gBall;
+  private Geometry gM, gBall;
   //private Spatial testcoin;
   
   /** Prepare geometries and physical nodes for bricks and cannon balls. */
@@ -73,17 +74,8 @@ public class Main extends SimpleApplication {
     shootables = new Node("Shootables");
     rootNode.attachChild(shootables);
     
-    //make gumball machine
-    gM = makeCube("Gumball Machine", 0, 2f, 1f);    
-    gM.addControl((Control) new gumballMachine());
-    gM.getControl(gumballMachine.class).setCount(5);
-    shootables.attachChild(gM);
-    System.out.println("Machine has " + gM.getUserData("gCount") + " gumballs");
-
-    //make coins
+    makeGumballMachine();
     makeCoins();
-    
-    
     
     /** Initialize the scene, materials, and physics space */
     initMaterials();
@@ -110,20 +102,16 @@ public class Main extends SimpleApplication {
     Geometry balloon = new Geometry(name, sphere_ball);
     Material mat1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
     mat1.setColor("Color", ColorRGBA.randomColor());
-   
     balloon.setMaterial(mat1);
     balloon.setLocalTranslation(x,y,z);
     
     /** Make the ball physcial with a mass > 0.0f */
     ball_phy = new RigidBodyControl(1f);
-    //ball_phy2.applyCentralForce(new Vector3f(0,400*10,0));
+    
     /** Add physical ball to physics space. */
     balloon.addControl(ball_phy);
     bulletAppState.getPhysicsSpace().add(ball_phy);
-    
     return balloon;
-      
-      
   }
    
   protected Geometry makeGumball(String name, float x, float y, float z, ColorRGBA color) {
@@ -131,24 +119,20 @@ public class Main extends SimpleApplication {
     sphere_ball.setTextureMode(TextureMode.Projected);
     Geometry gumball = new Geometry(name, sphere_ball);
     Material mat1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-    
     mat1.setColor("Color", color);
-   
     gumball.setMaterial(mat1);
     gumball.setLocalTranslation(x,y,z);
     
     /** Make the ball physcial with a mass > 0.0f */
     ball_phy = new RigidBodyControl(1f);
-    //ball_phy2.applyCentralForce(new Vector3f(0,400*10,0));
+    
     /** Add physical ball to physics space. */
     gumball.addControl(ball_phy);
     bulletAppState.getPhysicsSpace().add(ball_phy);
     
     return gumball;
-      
   
   }
-  
   
    /** A cube object for target practice */
   protected Geometry makeCube(String name, float x, float y, float z) {
@@ -164,6 +148,15 @@ public class Main extends SimpleApplication {
     bulletAppState.getPhysicsSpace().add(cube_phy);
     
     return cube;
+  }
+  
+  public void makeGumballMachine() {
+    //make gumball machine
+    gM = makeCube("Gumball Machine", 0, 2f, 1f);    
+    gM.addControl((Control) new gumballMachine());
+    gM.getControl(gumballMachine.class).setCount(5);
+    gM.getControl(gumballMachine.class).resetAmtInSlot();
+    shootables.attachChild(gM);
   }
   
   //make 3 coins - 1 qtr, 1 nickel, 1 dime
@@ -183,6 +176,9 @@ public class Main extends SimpleApplication {
     Nickel.scale(0.8f, 0.8f, 0.8f);
     Nickel.rotate(2f, -3.0f, 0.0f);
     Nickel.setLocalTranslation(3f, 2f, 0f);
+    Nickel.addControl((Control) new Coin());
+    Nickel.getControl(Coin.class).setValue(5);
+    Nickel.getControl(Coin.class).setCount(1);
     shootables.attachChild(Nickel);
     
     Spatial Dime = assetManager.loadModel("Models/SilverCoin/SilverCoin.mesh.xml");
@@ -190,6 +186,9 @@ public class Main extends SimpleApplication {
     Dime.scale(0.5f, 0.5f, 0.5f);
     Dime.rotate(2f, -3.0f, 0.0f);
     Dime.setLocalTranslation(3f, 4f, 0f);
+    Dime.addControl((Control) new Coin());
+    Dime.getControl(Coin.class).setValue(10);
+    Dime.getControl(Coin.class).setCount(1);
     shootables.attachChild(Dime);
     
     Spatial Penny = assetManager.loadModel("Models/BrownCoin/BrownCoin.mesh.xml");
@@ -197,32 +196,16 @@ public class Main extends SimpleApplication {
     Penny.scale(0.5f, 0.5f, 0.5f);
     Penny.rotate(2f, -3.0f, 0.0f);
     Penny.setLocalTranslation(5f, 4f, 0f);
+    Penny.addControl((Control) new Coin());
+    Penny.getControl(Coin.class).setValue(1);
+    Penny.getControl(Coin.class).setCount(1);
     shootables.attachChild(Penny);    
    
     // You must add a light to make the model visible
     DirectionalLight sun = new DirectionalLight();
     sun.setDirection(new Vector3f(-0.1f, -0.7f, -1.0f));
     shootables.addLight(sun);
-      
-    /*coinQ = makeSphere("Quarter", -5, 3, 5);
-    coinQ.addControl((Control) new Coin());
-    coinQ.getControl(Coin.class).setValue(25);
-    coinQ.getControl(Coin.class).setCount(1);
-    shootables.attachChild(coinQ);
-    
-    coinN = makeSphere("Nickel", 3, 3, 5);
-    coinN.addControl((Control) new Coin());
-    coinN.getControl(Coin.class).setValue(5);
-    coinN.getControl(Coin.class).setCount(1);
-    shootables.attachChild(coinN);
-    
-    coinD = makeSphere("Dime", 6, 4, 5);
-    coinD.addControl((Control) new Coin());
-    coinD.getControl(Coin.class).setValue(10);
-    coinD.getControl(Coin.class).setCount(1);
-    shootables.attachChild(coinD);
-    */
-    
+
   }
   
   public void makeGumball() {
@@ -291,6 +274,7 @@ public class Main extends SimpleApplication {
     inputManager.addListener(actionListener, "Refill");
   }
   
+  
   private ActionListener actionListener = new ActionListener() {
       public void onAction(String name, boolean keyPressed, float tpf) {
           if (name.equals("Click") && !keyPressed) {
@@ -301,24 +285,30 @@ public class Main extends SimpleApplication {
             // 3. Collect intersections between Ray and Shootables in results list.
             shootables.collideWith(ray, results);
             
-            if (results.size() != 0) {//not missed
+            if (results.size() > 0) {//not missed
                 //String hit = results.getCollision(0).getGeometry().getName();
                 //System.out.println("  You hit " + hit);
+                Spatial s = results.getCollision(0).getGeometry();
+                s = s.getParent();
                 if ("Gumball Machine".equals(results.getCollision(0).getGeometry().getName())){
                     gM.getControl(gumballMachine.class).turnCrank();
-                    gM.getControl(gumballMachine.class).getCount();
-                    makeGumball();
-                }
-                /*else if ("SilverCoin-ogremesh".equals(results.getCollision(0).getSpatial().getName())){
+                    if (gM.getControl(gumballMachine.class).makeGumball()){
+                        makeGumball();  
+                        gM.getControl(gumballMachine.class).resetAmtInSlot();
+                    }
                     
-                }*/
-                /*else if ("Quarter".equals(results.getCollision(0).getGeometry().getName()) 
-                        || "Dime".equals(results.getCollision(0).getGeometry().getName())
-                        || "Nickel".equals(results.getCollision(0).getGeometry().getName()) ) {
-                    System.out.print("Coin is worth ");
-                    System.out.print(results.getCollision(0).getGeometry().getUserData("value"));
-                    System.out.println(" cents");
-                }*/
+                }
+                else if ("Quarter".equals(s.getName()) || "Dime".equals(s.getName())
+                        || "Nickel".equals(s.getName()) || "Penny".equals(s.getName()) ) {
+                    System.out.println(s.getName() + " inserted.");
+                    //System.out.print(s.getUserData("value"));
+                    //System.out.println(" cent(s)");
+                    gM.getControl(gumballMachine.class).acceptCoin((Integer)s.getUserData("value"));
+                    shootables.detachChild(s);
+                    System.out.print("Machine has: ");
+                    System.out.print(gM.getControl(gumballMachine.class).getAmtInSlot());
+                    System.out.println(" cent(s)");
+                }
                 else if ("gumball".equals(results.getCollision(0).getGeometry().getName())){
                     System.out.print("Gumball has color ");
                     System.out.print(results.getCollision(0).getGeometry().getUserData("color"));

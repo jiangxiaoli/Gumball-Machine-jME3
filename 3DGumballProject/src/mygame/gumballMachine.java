@@ -6,8 +6,10 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.scene.control.AbstractControl;
 
 public class gumballMachine extends AbstractControl{
+    private int gBAmount = 25; //gumball amount
+    private boolean dispense = false; //if gumball was dispensed or not
+    
     public gumballMachine() {
-        
     }
     
     public void setCount(int count) {
@@ -21,12 +23,24 @@ public class gumballMachine extends AbstractControl{
     public void turnCrank() {
         if (getCount() > 0) {
             System.out.println("Crank turned!");
-            dispense();
-            System.out.println(spatial.getUserData("gCount") + " gumball(s) remaining");
+            if (hasGBAmount()){
+                dispense();
+                dispense = true;
+                System.out.println(spatial.getUserData("gCount") + " gumball(s) remaining");
+            }
+            else {
+                int put_in = getAmtInSlot();
+                int remaining = gBAmount - put_in;
+                System.out.println("You still need to put in " + remaining + " cent(s)");
+            }
         }
         else {
             System.out.println("Crank turned, but the gumball machine is out of gumballs!");
         }
+    }
+    
+    public boolean makeGumball() {
+        return dispense;
     }
     
     public void refill(int gumballs) {
@@ -41,6 +55,30 @@ public class gumballMachine extends AbstractControl{
         int count = getCount();
         count--;
         setCount(count);
+    }
+    
+    public void acceptCoin(int coin_amt) {
+        int curr_amt = getAmtInSlot();
+        curr_amt += coin_amt;
+        spatial.setUserData("payment", curr_amt);
+    }
+    
+    public void resetAmtInSlot() {
+        spatial.setUserData("payment", 0);
+        dispense = false;
+    }
+    
+    public int getAmtInSlot() {
+        return (Integer)spatial.getUserData("payment");
+    }
+    
+    public boolean hasGBAmount() {
+        if ((Integer)spatial.getUserData("payment") >= gBAmount) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     @Override
