@@ -168,16 +168,41 @@ public class Main extends SimpleApplication {
   
   //make 3 coins - 1 qtr, 1 nickel, 1 dime
   public void makeCoins() {
-    /*Spatial testcoin = assetManager.loadModel("Models/Coin/Coin.mesh.xml");
-    testcoin.scale(1f, 1f, 1f);
-    testcoin.rotate(0.0f, -3.0f, 0.0f);
-    testcoin.setLocalTranslation(0.0f, 0f, 0f);
-    shootables.attachChild(testcoin);
-        
+    Spatial Quarter = assetManager.loadModel("Models/SilverCoin/SilverCoin.mesh.xml");
+    Quarter.setName("Quarter");
+    Quarter.scale(1f, 1f, 1f);
+    Quarter.rotate(2f, -3.0f, 0.0f);
+    Quarter.setLocalTranslation(5f, 2f, 0f);
+    Quarter.addControl((Control) new Coin());
+    Quarter.getControl(Coin.class).setValue(25);
+    Quarter.getControl(Coin.class).setCount(1);
+    shootables.attachChild(Quarter);
+    
+    Spatial Nickel = assetManager.loadModel("Models/SilverCoin/SilverCoin.mesh.xml");
+    Nickel.setName("Nickel");
+    Nickel.scale(0.8f, 0.8f, 0.8f);
+    Nickel.rotate(2f, -3.0f, 0.0f);
+    Nickel.setLocalTranslation(3f, 2f, 0f);
+    shootables.attachChild(Nickel);
+    
+    Spatial Dime = assetManager.loadModel("Models/SilverCoin/SilverCoin.mesh.xml");
+    Dime.setName("Dime");
+    Dime.scale(0.5f, 0.5f, 0.5f);
+    Dime.rotate(2f, -3.0f, 0.0f);
+    Dime.setLocalTranslation(3f, 4f, 0f);
+    shootables.attachChild(Dime);
+    
+    Spatial Penny = assetManager.loadModel("Models/BrownCoin/BrownCoin.mesh.xml");
+    Penny.setName("Penny");
+    Penny.scale(0.5f, 0.5f, 0.5f);
+    Penny.rotate(2f, -3.0f, 0.0f);
+    Penny.setLocalTranslation(5f, 4f, 0f);
+    shootables.attachChild(Penny);    
+   
     // You must add a light to make the model visible
     DirectionalLight sun = new DirectionalLight();
     sun.setDirection(new Vector3f(-0.1f, -0.7f, -1.0f));
-    shootables.addLight(sun);*/
+    shootables.addLight(sun);
       
     /*coinQ = makeSphere("Quarter", -5, 3, 5);
     coinQ.addControl((Control) new Coin());
@@ -284,13 +309,16 @@ public class Main extends SimpleApplication {
                     gM.getControl(gumballMachine.class).getCount();
                     makeGumball();
                 }
-                else if ("Quarter".equals(results.getCollision(0).getGeometry().getName()) 
+                /*else if ("SilverCoin-ogremesh".equals(results.getCollision(0).getSpatial().getName())){
+                    
+                }*/
+                /*else if ("Quarter".equals(results.getCollision(0).getGeometry().getName()) 
                         || "Dime".equals(results.getCollision(0).getGeometry().getName())
                         || "Nickel".equals(results.getCollision(0).getGeometry().getName()) ) {
                     System.out.print("Coin is worth ");
                     System.out.print(results.getCollision(0).getGeometry().getUserData("value"));
                     System.out.println(" cents");
-                }
+                }*/
                 else if ("gumball".equals(results.getCollision(0).getGeometry().getName())){
                     System.out.print("Gumball has color ");
                     System.out.print(results.getCollision(0).getGeometry().getUserData("color"));
