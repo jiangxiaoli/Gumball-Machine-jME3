@@ -26,6 +26,8 @@ import com.jme3.scene.shape.Sphere;
 import com.jme3.scene.shape.Sphere.TextureMode;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
+import com.jme3.util.SkyFactory;
+import java.util.Random;
 
  
 public class Main extends SimpleApplication {
@@ -77,7 +79,8 @@ public class Main extends SimpleApplication {
     /** Configure cam to look at scene */
     cam.setLocation(new Vector3f(0, 4f, 18f));
     cam.lookAt(new Vector3f(0, 2, 0), Vector3f.UNIT_Y);
-    
+    rootNode.attachChild(SkyFactory.createSky(
+            assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
     shootables = new Node("Shootables");
     rootNode.attachChild(shootables);
     
@@ -122,7 +125,7 @@ public class Main extends SimpleApplication {
   }
    
   protected Geometry makeGumball(String name, float x, float y, float z, ColorRGBA color) {
-    Sphere sphere_ball = new Sphere(40, 150, 0.8f, true, false);
+    Sphere sphere_ball = new Sphere(35, 35, 0.8f, true, false);
     sphere_ball.setTextureMode(TextureMode.Projected);
     Geometry gumball = new Geometry(name, sphere_ball);
     Material mat1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -222,15 +225,60 @@ public class Main extends SimpleApplication {
 
   }
   
-  public void makeGumball() {
-      ColorRGBA Red = new ColorRGBA(1,0,0,1);//red
-      gBall = makeGumball("gumball", 0, 3, 8, Red);
-      gBall.addControl((Control) new gumball());
-      gBall.getControl(gumball.class).setColor("red");
-      gBall.getControl(gumball.class).setValue(5);
-      shootables.attachChild(gBall);
+  public void makeGumballs(int rand_c) {
+      switch(rand_c) {
+          case 1:
+              ColorRGBA Red = new ColorRGBA(1,0,0,1);//red
+              gBall = makeGumball("gumball", 0, 3, 8, Red);
+              gBall.addControl((Control) new gumball());
+              gBall.getControl(gumball.class).setColor("red");
+              gBall.getControl(gumball.class).setValue(5);
+              shootables.attachChild(gBall);
+              break;
+          case 2:
+              ColorRGBA Green = new ColorRGBA(0,1,0,1);//green
+              gBall = makeGumball("gumball", 0, 3, 8, Green);
+              gBall.addControl((Control) new gumball());
+              gBall.getControl(gumball.class).setColor("green");
+              gBall.getControl(gumball.class).setValue(15);
+              shootables.attachChild(gBall);
+              break;
+          case 3:
+              ColorRGBA Blue = new ColorRGBA(0,0,1,1);//blue
+              gBall = makeGumball("gumball", 0, 3, 8, Blue);
+              gBall.addControl((Control) new gumball());
+              gBall.getControl(gumball.class).setColor("blue");
+              gBall.getControl(gumball.class).setValue(50);
+              shootables.attachChild(gBall);
+              break;
+          case 4:
+              ColorRGBA Yellow = new ColorRGBA(1,1,0,1);//yellow
+              gBall = makeGumball("gumball", 0, 3, 8, Yellow);
+              gBall.addControl((Control) new gumball());
+              gBall.getControl(gumball.class).setColor("yellow");
+              gBall.getControl(gumball.class).setValue(35);
+              shootables.attachChild(gBall);
+              break;
+          case 5:
+              ColorRGBA Pink = new ColorRGBA(1,0.68f,0.68f,1);//pink
+              gBall = makeGumball("gumball", 0, 3, 8, Pink);
+              gBall.addControl((Control) new gumball());
+              gBall.getControl(gumball.class).setColor("pink");
+              gBall.getControl(gumball.class).setValue(100);
+              shootables.attachChild(gBall);
+              break;
+      }
       
   }
+  
+  public static int randInt(int min, int max) {
+    Random rand = new Random();
+
+    // nextInt is normally exclusive of the top value,
+    // so add 1 to make it inclusive
+    int randomNum = rand.nextInt((max - min) + 1) + min;
+    return randomNum;
+}
  
   /** Initialize the materials used in this scene. */
   public void initMaterials() {
@@ -250,6 +298,7 @@ public class Main extends SimpleApplication {
  
   /** Make a solid floor and add it to the scene. */
   public void initFloor() {
+    
     Geometry floor_geo = new Geometry("Floor", floor);
     floor_geo.setMaterial(floor_mat);
     floor_geo.setLocalTranslation(0, -0.1f, 0);
@@ -307,7 +356,7 @@ public class Main extends SimpleApplication {
                 if ("Gumball Machine".equals(results.getCollision(0).getGeometry().getName())){
                     gM.getControl(gumballMachine.class).turnCrank();
                     if (gM.getControl(gumballMachine.class).makeGumball()){
-                        makeGumball();  
+                        makeGumballs(randInt(1,5));//random # btwn 1-5 for color
                         gM.getControl(gumballMachine.class).resetAmtInSlot();
                     }
                     
