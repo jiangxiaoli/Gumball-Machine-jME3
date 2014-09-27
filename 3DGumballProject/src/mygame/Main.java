@@ -29,9 +29,7 @@ import com.jme3.texture.Texture.WrapMode;
 import com.jme3.util.SkyFactory;
 import java.util.Random;
 
- 
-public class Main extends SimpleApplication {
- 
+public class Main extends SimpleApplication { 
   public static void main(String args[]) {
     Main app = new Main();
     app.start();
@@ -47,16 +45,16 @@ public class Main extends SimpleApplication {
   /** Prepare Materials */
   Material stone_mat;
   Material floor_mat;
-  private Node shootables;
-  private Geometry gM, gBall;
-  //private Spatial testcoin;
+  private Node shootables; //node for all objects
+  private Geometry gM, gBall; //for gumballmachine and gumballs
   
-  /** Prepare geometries and physical nodes for bricks and cannon balls. */
+  /** Prepare geometries and physical nodes for gumballs, floor and cube. */
   private RigidBodyControl    ball_phy;
   private static final Sphere sphere;
   private RigidBodyControl    floor_phy;
   private static final Box    floor;
   private RigidBodyControl    cube_phy;
+  private RigidBodyControl    coin_phy;
  
   static {
     /** Initialize the cannon ball geometry */
@@ -69,8 +67,8 @@ public class Main extends SimpleApplication {
  
   @Override
   public void simpleInitApp() {
-    ColorRGBA background_blue = new ColorRGBA(.1f,.5f,1,1);
-    viewPort.setBackgroundColor(background_blue);
+    //ColorRGBA background_blue = new ColorRGBA(.1f,.5f,1,1);
+    //viewPort.setBackgroundColor(background_blue);
     
     /** Set up Physics Game */
     bulletAppState = new BulletAppState();
@@ -79,8 +77,12 @@ public class Main extends SimpleApplication {
     /** Configure cam to look at scene */
     cam.setLocation(new Vector3f(0, 4f, 18f));
     cam.lookAt(new Vector3f(0, 2, 0), Vector3f.UNIT_Y);
+    
+    //add sky model to world
     rootNode.attachChild(SkyFactory.createSky(
             assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
+    
+    //node for all gumballmachine world objects
     shootables = new Node("Shootables");
     rootNode.attachChild(shootables);
     
@@ -172,50 +174,69 @@ public class Main extends SimpleApplication {
   //make 20 coins
   public void makeCoins() {
     //making 5x each coin
-    int j = 3;
-    int k = -3;
+    int j = 2;
     for (int i = 0; i < 5; i++) {
         Spatial Quarter = assetManager.loadModel("Models/SilverCoin/SilverCoin.mesh.xml");
         Quarter.setName("Quarter");
         Quarter.scale(1f, 1f, 1f);
         Quarter.rotate(2f, -3.0f, 0.0f);
-        Quarter.setLocalTranslation(j, 2, 0);
+        Quarter.setLocalTranslation(3, j, 0);
         Quarter.addControl((Control) new Coin());
         Quarter.getControl(Coin.class).setValue(25);
         Quarter.getControl(Coin.class).setCount(1);
         shootables.attachChild(Quarter);
+        /** Make the ball physcial with a mass > 0.0f */
+        coin_phy = new RigidBodyControl(0.5f);
+        /** Add physical coin to physics space. */
+        Quarter.addControl(coin_phy);
+        bulletAppState.getPhysicsSpace().add(coin_phy);
         
         Spatial Nickel = assetManager.loadModel("Models/SilverCoin/SilverCoin.mesh.xml");
         Nickel.setName("Nickel");
         Nickel.scale(0.8f, 0.8f, 0.8f);
         Nickel.rotate(2f, -3.0f, 0.0f);
-        Nickel.setLocalTranslation(k, 2, 0);
+        Nickel.setLocalTranslation(6, j, 0);
         Nickel.addControl((Control) new Coin());
         Nickel.getControl(Coin.class).setValue(5);
         Nickel.getControl(Coin.class).setCount(1);
         shootables.attachChild(Nickel);
+        /** Make the ball physcial with a mass > 0.0f */
+        coin_phy = new RigidBodyControl(0.5f);
+        /** Add physical coin to physics space. */
+        Nickel.addControl(coin_phy);
+        bulletAppState.getPhysicsSpace().add(coin_phy);
         
         Spatial Dime = assetManager.loadModel("Models/SilverCoin/SilverCoin.mesh.xml");
         Dime.setName("Dime");
         Dime.scale(0.5f, 0.5f, 0.5f);
         Dime.rotate(2f, -3.0f, 0.0f);
-        Dime.setLocalTranslation(j, 4, 0);
+        Dime.setLocalTranslation(-3, j, 0);
         Dime.addControl((Control) new Coin());
         Dime.getControl(Coin.class).setValue(10);
         Dime.getControl(Coin.class).setCount(1);
         shootables.attachChild(Dime);
+        /** Make the ball physcial with a mass > 0.0f */
+        coin_phy = new RigidBodyControl(0.5f);
+        /** Add physical coin to physics space. */
+        Dime.addControl(coin_phy);
+        bulletAppState.getPhysicsSpace().add(coin_phy);
         
         Spatial Penny = assetManager.loadModel("Models/BrownCoin/BrownCoin.mesh.xml");
         Penny.setName("Penny");
         Penny.scale(0.5f, 0.5f, 0.5f);
         Penny.rotate(2f, -3.0f, 0.0f);
-        Penny.setLocalTranslation(k, 4, 0);
+        Penny.setLocalTranslation(-6, j, 0);
         Penny.addControl((Control) new Coin());
         Penny.getControl(Coin.class).setValue(1);
         Penny.getControl(Coin.class).setCount(1);
-        shootables.attachChild(Penny);   
+        shootables.attachChild(Penny);
+        /** Make the ball physcial with a mass > 0.0f */
+        coin_phy = new RigidBodyControl(0.5f);
+        /** Add physical coin to physics space. */
+        Penny.addControl(coin_phy);
+        bulletAppState.getPhysicsSpace().add(coin_phy);
+        
         j+=2;
-        k-=2;
     }
    
     // You must add a light to make the model visible
@@ -225,6 +246,7 @@ public class Main extends SimpleApplication {
 
   }
   
+  //make individual gumballs w/ random color
   public void makeGumballs(int rand_c) {
       switch(rand_c) {
           case 1:
@@ -272,13 +294,30 @@ public class Main extends SimpleApplication {
   }
   
   public static int randInt(int min, int max) {
+    //inclusive of min and max
     Random rand = new Random();
-
-    // nextInt is normally exclusive of the top value,
-    // so add 1 to make it inclusive
     int randomNum = rand.nextInt((max - min) + 1) + min;
     return randomNum;
 }
+  
+  /** This method creates one individual physical cannon ball.
+   * By defaul, the ball is accelerated and flies
+   * from the camera position in the camera direction.*/
+   public void makeCannonBall() {
+    /** Create a cannon ball geometry and attach to scene graph. */
+    Geometry ball_geo = new Geometry("cannon ball", sphere);
+    ball_geo.setMaterial(stone_mat);
+    rootNode.attachChild(ball_geo);
+    /** Position the cannon ball  */
+    ball_geo.setLocalTranslation(cam.getLocation());
+    /** Make the ball physcial with a mass > 0.0f */
+    ball_phy = new RigidBodyControl(1f);
+    /** Add physical ball to physics space. */
+    ball_geo.addControl(ball_phy);
+    bulletAppState.getPhysicsSpace().add(ball_phy);
+    /** Accelerate the physcial ball to shoot it. */
+    ball_phy.setLinearVelocity(cam.getDirection().mult(25));
+  }
  
   /** Initialize the materials used in this scene. */
   public void initMaterials() {
@@ -392,7 +431,7 @@ public class Main extends SimpleApplication {
               //default refill by 5 gumballs
           }//for "Refill"
           else if (name.equals("Shoot") && !keyPressed) {
-              //do something here for shooting
+              makeCannonBall();
           }//for "Shoot"
           
           
