@@ -67,8 +67,9 @@ public class Main extends SimpleApplication {
  
   @Override
   public void simpleInitApp() {
-    //ColorRGBA background_blue = new ColorRGBA(.1f,.5f,1,1);
-    //viewPort.setBackgroundColor(background_blue);
+    //make background world blue color
+    ColorRGBA background_blue = new ColorRGBA(.1f,.5f,1,1);
+    viewPort.setBackgroundColor(background_blue);
     
     /** Set up Physics Game */
     bulletAppState = new BulletAppState();
@@ -79,8 +80,8 @@ public class Main extends SimpleApplication {
     cam.lookAt(new Vector3f(0, 2, 0), Vector3f.UNIT_Y);
     
     //add sky model to world
-    rootNode.attachChild(SkyFactory.createSky(
-            assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
+    //rootNode.attachChild(SkyFactory.createSky(
+      //      assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
     
     //node for all gumballmachine world objects
     shootables = new Node("Shootables");
@@ -134,9 +135,10 @@ public class Main extends SimpleApplication {
     mat1.setColor("Color", color);
     gumball.setMaterial(mat1);
     gumball.setLocalTranslation(x,y,z);
+    gumball.scale(0.5f);
     
     /** Make the ball physcial with a mass > 0.0f */
-    ball_phy = new RigidBodyControl(1f);
+    ball_phy = new RigidBodyControl(0.5f);
     
     /** Add physical ball to physics space. */
     gumball.addControl(ball_phy);
@@ -171,11 +173,84 @@ public class Main extends SimpleApplication {
     shootables.attachChild(gM);
   }
   
-  //make 20 coins
+  //make all coins
   public void makeCoins() {
-    //making 5x each coin
-    int j = 2;
-    for (int i = 0; i < 5; i++) {
+    //for stacked coins
+    System.out.println("There are piles of coins");
+    float j = 0.1f;
+    float k = j;
+    for (int i = 0; i < 10; i++) {
+        
+        Spatial Quarter = assetManager.loadModel("Models/SilverCoin/SilverCoin.mesh.xml");
+        Quarter.setName("Quarter");
+        Quarter.scale(1f, 1f, 1f);
+        Quarter.rotate(0f, 0.0f, 0.0f);
+        Quarter.setLocalTranslation(3, j, 0);
+        Quarter.addControl((Control) new Coin());
+        Quarter.getControl(Coin.class).setValue(25);
+        Quarter.getControl(Coin.class).setCount(1);
+        shootables.attachChild(Quarter);
+        /** Make the ball physcial with a mass > 0.0f */
+        coin_phy = new RigidBodyControl(0.1f);
+        /** Add physical coin to physics space. */
+        Quarter.addControl(coin_phy);
+        bulletAppState.getPhysicsSpace().add(coin_phy);
+        
+        Spatial Nickel = assetManager.loadModel("Models/SilverCoin/SilverCoin.mesh.xml");
+        Nickel.setName("Nickel");
+        Nickel.scale(0.8f, 0.8f, 0.8f);
+        Nickel.rotate(0f, 0.0f, 0.0f);
+        Nickel.setLocalTranslation(6, j, 0);
+        Nickel.addControl((Control) new Coin());
+        Nickel.getControl(Coin.class).setValue(5);
+        Nickel.getControl(Coin.class).setCount(1);
+        shootables.attachChild(Nickel);
+        /** Make the ball physcial with a mass > 0.0f */
+        coin_phy = new RigidBodyControl(0.1f);
+        /** Add physical coin to physics space. */
+        Nickel.addControl(coin_phy);
+        bulletAppState.getPhysicsSpace().add(coin_phy);
+        
+        Spatial Dime = assetManager.loadModel("Models/SilverCoin/SilverCoin.mesh.xml");
+        Dime.setName("Dime");
+        Dime.scale(0.5f, 0.5f, 0.5f);
+        Dime.rotate(0f, 0.0f, 0.0f);
+        Dime.setLocalTranslation(-3, k, 0);
+        Dime.addControl((Control) new Coin());
+        Dime.getControl(Coin.class).setValue(10);
+        Dime.getControl(Coin.class).setCount(1);
+        shootables.attachChild(Dime);
+        /** Make the ball physcial with a mass > 0.0f */
+        coin_phy = new RigidBodyControl(0.01f);
+        /** Add physical coin to physics space. */
+        Dime.addControl(coin_phy);
+        bulletAppState.getPhysicsSpace().add(coin_phy);
+        
+        Spatial Penny = assetManager.loadModel("Models/BrownCoin/BrownCoin.mesh.xml");
+        Penny.setName("Penny");
+        Penny.scale(0.5f, 0.5f, 0.5f);
+        Penny.rotate(0f, 0.0f, 0.0f);
+        Penny.setLocalTranslation(-6, k, 0);
+        Penny.addControl((Control) new Coin());
+        Penny.getControl(Coin.class).setValue(1);
+        Penny.getControl(Coin.class).setCount(1);
+        shootables.attachChild(Penny);
+        /** Make the ball physcial with a mass > 0.0f */
+        coin_phy = new RigidBodyControl(0.1f);
+        /** Add physical coin to physics space. */
+        Penny.addControl(coin_phy);
+        bulletAppState.getPhysicsSpace().add(coin_phy);
+        
+        j+=0.1;
+        k+=0.05;
+    }
+    
+    
+    //for falling coins
+    /*System.out.println("It's raining coins!");
+    int j = 1;
+    for (int i = 0; i < 10; i++) {
+        
         Spatial Quarter = assetManager.loadModel("Models/SilverCoin/SilverCoin.mesh.xml");
         Quarter.setName("Quarter");
         Quarter.scale(1f, 1f, 1f);
@@ -185,9 +260,9 @@ public class Main extends SimpleApplication {
         Quarter.getControl(Coin.class).setValue(25);
         Quarter.getControl(Coin.class).setCount(1);
         shootables.attachChild(Quarter);
-        /** Make the ball physcial with a mass > 0.0f */
-        coin_phy = new RigidBodyControl(0.5f);
-        /** Add physical coin to physics space. */
+        /// Make the ball physcial with a mass > 0.0f
+        coin_phy = new RigidBodyControl(0.1f);
+        // Add physical coin to physics space. 
         Quarter.addControl(coin_phy);
         bulletAppState.getPhysicsSpace().add(coin_phy);
         
@@ -200,9 +275,9 @@ public class Main extends SimpleApplication {
         Nickel.getControl(Coin.class).setValue(5);
         Nickel.getControl(Coin.class).setCount(1);
         shootables.attachChild(Nickel);
-        /** Make the ball physcial with a mass > 0.0f */
-        coin_phy = new RigidBodyControl(0.5f);
-        /** Add physical coin to physics space. */
+        // Make the ball physcial with a mass > 0.0f 
+        coin_phy = new RigidBodyControl(0.1f);
+        // Add physical coin to physics space. 
         Nickel.addControl(coin_phy);
         bulletAppState.getPhysicsSpace().add(coin_phy);
         
@@ -215,9 +290,9 @@ public class Main extends SimpleApplication {
         Dime.getControl(Coin.class).setValue(10);
         Dime.getControl(Coin.class).setCount(1);
         shootables.attachChild(Dime);
-        /** Make the ball physcial with a mass > 0.0f */
-        coin_phy = new RigidBodyControl(0.5f);
-        /** Add physical coin to physics space. */
+        // Make the ball physcial with a mass > 0.0f 
+        coin_phy = new RigidBodyControl(0.01f);
+        // Add physical coin to physics space. 
         Dime.addControl(coin_phy);
         bulletAppState.getPhysicsSpace().add(coin_phy);
         
@@ -230,14 +305,14 @@ public class Main extends SimpleApplication {
         Penny.getControl(Coin.class).setValue(1);
         Penny.getControl(Coin.class).setCount(1);
         shootables.attachChild(Penny);
-        /** Make the ball physcial with a mass > 0.0f */
-        coin_phy = new RigidBodyControl(0.5f);
-        /** Add physical coin to physics space. */
+        // Make the ball physcial with a mass > 0.0f 
+        coin_phy = new RigidBodyControl(0.1f);
+        // Add physical coin to physics space.
         Penny.addControl(coin_phy);
         bulletAppState.getPhysicsSpace().add(coin_phy);
         
-        j+=2;
-    }
+        j+=1;
+    }*/
    
     // You must add a light to make the model visible
     DirectionalLight sun = new DirectionalLight();
