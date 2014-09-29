@@ -47,7 +47,8 @@ public class Main extends SimpleApplication {
   Material stone_mat;
   Material floor_mat;
   private Node shootables; //node for all objects
-  private Geometry gM, gBall; //for gumballmachine and gumballs
+  private Node gumballMachine; //node for gumball machine parts
+  private Geometry gBall; //for gumballmachine and gumballs
   
   /** Prepare geometries and physical nodes for gumballs, floor and cube. */
   private RigidBodyControl    ball_phy;
@@ -69,7 +70,7 @@ public class Main extends SimpleApplication {
     sphere = new Sphere(32, 32, 0.4f, true, false);
     sphere.setTextureMode(TextureMode.Projected);
     /** Initialize the floor geometry */
-    floor = new Box(20f, 0.1f, 15f);
+    floor = new Box(30f, 0.1f, 20f);
     floor.scaleTextureCoordinates(new Vector2f(3, 6));
   }
  
@@ -93,6 +94,7 @@ public class Main extends SimpleApplication {
     
     //node for all gumballmachine world objects
     shootables = new Node("Shootables");
+    gumballMachine = new Node("GumballMachine");
     rootNode.attachChild(shootables);
     
     makeGumballMachine();
@@ -159,7 +161,7 @@ public class Main extends SimpleApplication {
   
    /** A cube object for target practice */
   protected Geometry makeCube(String name, float x, float y, float z) {
-    Box box = new Box(1, 3, 2);
+    Box box = new Box(1, 4, 2);
     Geometry cube = new Geometry(name, box);
     cube.setLocalTranslation(x, y, z);
     Material mat1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -175,11 +177,29 @@ public class Main extends SimpleApplication {
   
   protected void makeGumballMachine() {
     //make gumball machine
-    gM = makeCube("Gumball Machine", 0, 4f, 1f);    
-    gM.addControl((Control) new gumballMachine());
-    gM.getControl(gumballMachine.class).setCount(5);
-    gM.getControl(gumballMachine.class).resetAmtInSlot();
-    shootables.attachChild(gM);
+    Spatial gM_bot = assetManager.loadModel("Models/GM_buttom/GM_buttom.mesh.xml");
+    gM_bot.setLocalTranslation(0, 5f, 1f);
+    gM_bot.scale(2f,2f,2f);
+    gumballMachine.attachChild(gM_bot);
+    
+    Spatial gM_mid = assetManager.loadModel("Models/GM_middle/GM_middle.mesh.xml");
+    gM_mid.setLocalTranslation(0, 5f, 1f);
+    gM_mid.scale(2f,2f,2f);
+    gumballMachine.attachChild(gM_mid);
+    
+    Spatial gM_top = assetManager.loadModel("Models/GM_top/GM_top.mesh.xml");
+    gM_top.setLocalTranslation(0, 5f, 1f);
+    gM_top.scale(2f,2f,2f);
+    gumballMachine.attachChild(gM_top);
+    gumballMachine.setName("Gumball Machine");
+    
+    shootables.attachChild(gumballMachine);
+    
+    //gM = makeCube("Gumball Machine", 0, 4f, 1f);    
+    gumballMachine.addControl((Control) new gumballMachine());
+    gumballMachine.getControl(gumballMachine.class).setCount(5);
+    gumballMachine.getControl(gumballMachine.class).resetAmtInSlot();
+    
   }
   
   //make all coins
@@ -194,7 +214,7 @@ public class Main extends SimpleApplication {
         Quarter.setName("Quarter");
         Quarter.scale(1f, 1f, 1f);
         Quarter.rotate(0f, 0.0f, 0.0f);
-        Quarter.setLocalTranslation(3, j, 0);
+        Quarter.setLocalTranslation(5, j, 0);
         Quarter.addControl((Control) new Coin());
         Quarter.getControl(Coin.class).setValue(25);
         Quarter.getControl(Coin.class).setCount(1);
@@ -209,7 +229,7 @@ public class Main extends SimpleApplication {
         Nickel.setName("Nickel");
         Nickel.scale(0.8f, 0.8f, 0.8f);
         Nickel.rotate(0f, 0.0f, 0.0f);
-        Nickel.setLocalTranslation(6, j, 0);
+        Nickel.setLocalTranslation(8, j, 0);
         Nickel.addControl((Control) new Coin());
         Nickel.getControl(Coin.class).setValue(5);
         Nickel.getControl(Coin.class).setCount(1);
@@ -224,7 +244,7 @@ public class Main extends SimpleApplication {
         Dime.setName("Dime");
         Dime.scale(0.5f, 0.5f, 0.5f);
         Dime.rotate(0f, 0.0f, 0.0f);
-        Dime.setLocalTranslation(-3, k, 0);
+        Dime.setLocalTranslation(-5, k, 0);
         Dime.addControl((Control) new Coin());
         Dime.getControl(Coin.class).setValue(10);
         Dime.getControl(Coin.class).setCount(1);
@@ -239,7 +259,7 @@ public class Main extends SimpleApplication {
         Penny.setName("Penny");
         Penny.scale(0.5f, 0.5f, 0.5f);
         Penny.rotate(0f, 0.0f, 0.0f);
-        Penny.setLocalTranslation(-6, k, 0);
+        Penny.setLocalTranslation(-9, k, 0);
         Penny.addControl((Control) new Coin());
         Penny.getControl(Coin.class).setValue(1);
         Penny.getControl(Coin.class).setCount(1);
@@ -335,7 +355,7 @@ public class Main extends SimpleApplication {
       switch(rand_c) {
           case 1:
               ColorRGBA Red = new ColorRGBA(1,0,0,1);//red
-              gBall = makeGumball("gumball", 0, 3, 5, Red);
+              gBall = makeGumball("gumball", 0, 1, 5, Red);
               gBall.addControl((Control) new gumball());
               gBall.getControl(gumball.class).setColor("red");
               gBall.getControl(gumball.class).setValue(5);
@@ -343,7 +363,7 @@ public class Main extends SimpleApplication {
               break;
           case 2:
               ColorRGBA Green = new ColorRGBA(0,1,0,1);//green
-              gBall = makeGumball("gumball", 0, 3, 5, Green);
+              gBall = makeGumball("gumball", 0, 1.5f, 5, Green);
               gBall.addControl((Control) new gumball());
               gBall.getControl(gumball.class).setColor("green");
               gBall.getControl(gumball.class).setValue(15);
@@ -351,7 +371,7 @@ public class Main extends SimpleApplication {
               break;
           case 3:
               ColorRGBA Blue = new ColorRGBA(0,0,1,1);//blue
-              gBall = makeGumball("gumball", 0, 3, 5, Blue);
+              gBall = makeGumball("gumball", 0, 1.5f, 5, Blue);
               gBall.addControl((Control) new gumball());
               gBall.getControl(gumball.class).setColor("blue");
               gBall.getControl(gumball.class).setValue(50);
@@ -359,7 +379,7 @@ public class Main extends SimpleApplication {
               break;
           case 4:
               ColorRGBA Yellow = new ColorRGBA(1,1,0,1);//yellow
-              gBall = makeGumball("gumball", 0, 3, 5, Yellow);
+              gBall = makeGumball("gumball", 0, 1.5f, 5, Yellow);
               gBall.addControl((Control) new gumball());
               gBall.getControl(gumball.class).setColor("yellow");
               gBall.getControl(gumball.class).setValue(35);
@@ -367,7 +387,7 @@ public class Main extends SimpleApplication {
               break;
           case 5:
               ColorRGBA Pink = new ColorRGBA(1,0.68f,0.68f,1);//pink
-              gBall = makeGumball("gumball", 0, 3, 5, Pink);
+              gBall = makeGumball("gumball", 0, 1.5f, 5, Pink);
               gBall.addControl((Control) new gumball());
               gBall.getControl(gumball.class).setColor("pink");
               gBall.getControl(gumball.class).setValue(100);
@@ -440,11 +460,13 @@ public class Main extends SimpleApplication {
     stone_mat.setTexture("ColorMap", tex2);
  
     floor_mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-    TextureKey key3 = new TextureKey("Textures/Terrain/Pond/Pond.jpg");
+    //floor_mat.setColor("Color", ColorRGBA.Gray);
+    TextureKey key3 = new TextureKey("Textures/Terrain/BrickWall/BrickWall.jpg");
     key3.setGenerateMips(true);
     Texture tex3 = assetManager.loadTexture(key3);
     tex3.setWrap(WrapMode.Repeat);
     floor_mat.setTexture("ColorMap", tex3);
+    
   }
  
   /** Make a solid floor and add it to the scene. */
@@ -503,9 +525,11 @@ public class Main extends SimpleApplication {
                 //String hit = results.getCollision(0).getGeometry().getName();
                 //System.out.println("  You hit " + hit);
                 Spatial s = results.getCollision(0).getGeometry();
-                s = s.getParent();
-                if ("Gumball Machine".equals(results.getCollision(0).getGeometry().getName())){
-                    gM.getControl(gumballMachine.class).turnCrank();
+                Spatial p = s.getParent();
+                s = p.getParent();
+                //System.out.println("You hit " + s.getName());
+                if ("Gumball Machine".equals(s.getName())){
+                    gumballMachine.getControl(gumballMachine.class).turnCrank();
                     mach_crank.playInstance();
                     //to delay release of gumball until after audio finishes
                     try {
@@ -514,24 +538,24 @@ public class Main extends SimpleApplication {
                         Thread.currentThread().interrupt();
                     }
                     
-                    if (gM.getControl(gumballMachine.class).makeGumball()){
+                    if (gumballMachine.getControl(gumballMachine.class).makeGumball()){
                         makeGumballs(randInt(1,5));//random # btwn 1-5 for color
                         ball_rel.playInstance();
-                        gM.getControl(gumballMachine.class).resetAmtInSlot();
+                        gumballMachine.getControl(gumballMachine.class).resetAmtInSlot();
                     }
                     
                 }
-                else if ("Quarter".equals(s.getName()) || "Dime".equals(s.getName())
-                        || "Nickel".equals(s.getName()) || "Penny".equals(s.getName()) ) {
-                    System.out.println(s.getName() + " inserted.");
+                else if ("Quarter".equals(p.getName()) || "Dime".equals(p.getName())
+                        || "Nickel".equals(p.getName()) || "Penny".equals(p.getName()) ) {
+                    System.out.println(p.getName() + " inserted.");
                     //System.out.print(s.getUserData("value"));
                     //System.out.println(" cent(s)");
-                    gM.getControl(gumballMachine.class).acceptCoin((Integer)s.getUserData("value"));
+                    gumballMachine.getControl(gumballMachine.class).acceptCoin((Integer)p.getUserData("value"));
                     //remove coin from scene
-                    shootables.detachChild(s);
+                    shootables.detachChild(p);
                     coin_slot.playInstance();
                     System.out.print("Machine has: ");
-                    System.out.print(gM.getControl(gumballMachine.class).getAmtInSlot());
+                    System.out.print(gumballMachine.getControl(gumballMachine.class).getAmtInSlot());
                     System.out.println(" cent(s)");
                 }
                 else if ("gumball".equals(results.getCollision(0).getGeometry().getName())){
@@ -549,7 +573,7 @@ public class Main extends SimpleApplication {
             
           }//for "Crank"
           else if (name.equals("Refill") && !keyPressed) {
-              gM.getControl(gumballMachine.class).refill(5);
+              gumballMachine.getControl(gumballMachine.class).refill(5);
               //default refill by 5 gumballs
           }//for "Refill"
           else if (name.equals("Shoot") && !keyPressed) {
