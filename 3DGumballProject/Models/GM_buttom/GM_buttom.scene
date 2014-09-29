@@ -1,0 +1,48 @@
+<scene exported_by="Corn" export_time="1412004769.93303" formatVersion="1.0.1" previous_export_time="0" >
+  <nodes >
+    <node name="Sphere.001" >
+      <position z="-0.290497" x="1.442075" y="3.759244" />
+      <rotation qy="0.000000" qz="-0.000000" qx="0.000000" qw="1.000000" />
+      <scale z="1.582138" x="1.582138" y="1.582138" />
+      <user_data type="IDPropertyGroup" value='&lt;bpy id prop: owner="OBSphere.001", name="cycles_visibility", address=0x600000f1db58&gt;' name="cycles_visibility" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <entity lock_rot_x="False" velocity_max="0.0" actor="False" lock_trans_x="False" inertia_tensor="0.4000000059604645" damping_trans="0.03999999910593033" lock_trans_z="False" mass_radius="1.0" friction_x="1.0" lock_trans_y="False" ghost="False" name="Sphere.001" lock_rot_z="False" mass="1.0" lock_rot_y="False" physics_type="STATIC" friction_y="1.0" velocity_min="0.0" anisotropic_friction="False" friction_z="1.0" meshFile="Sphere.001.mesh" damping_rot="0.10000000149011612" >
+        <user_data type="IDPropertyGroup" value='&lt;bpy id prop: owner="MESphere.001", name="cycles", address=0x600000f1e188&gt;' name="cycles" />
+      </entity>
+    </node>
+    <node name="Lamp" >
+      <position z="4.286975" x="-3.997002" y="4.694978" />
+      <rotation qy="0.755880" qz="-0.272171" qx="0.169076" qw="0.570948" />
+      <scale z="0.422156" x="0.422156" y="0.422156" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+    </node>
+    <node name="Camera" >
+      <position z="13.533757" x="2.957885" y="5.396175" />
+      <rotation qy="0.042475" qz="-0.040745" qx="0.621809" qw="0.780954" />
+      <scale z="1.000000" x="1.000000" y="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <camera name="Camera" fov="0.5033799435163735" projectionType="perspective" >
+        <clipping near="0.10000000149011612" far="100.0" farPlaneDist="100.0" nearPlaneDist="0.10000000149011612" />
+      </camera>
+    </node>
+  </nodes>
+  <externals >
+    <item type="material" >
+      <file name="/Users/Corn/Documents/Blender models/models/GM_buttom/GM_buttom.material" />
+    </item>
+  </externals>
+  <environment >
+    <colourBackground r="0.05087608844041824" b="0.05087608844041824" g="0.05087608844041824" />
+    <colourDiffuse r="0.05087608844041824" b="0.05087608844041824" g="0.05087608844041824" />
+    <colourAmbient r="0.0" b="0.0" g="0.0" />
+  </environment>
+</scene>
