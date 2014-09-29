@@ -2,6 +2,7 @@ package mygame;
  
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.TextureKey;
+import com.jme3.audio.AudioNode;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.collision.CollisionResults;
@@ -56,6 +57,13 @@ public class Main extends SimpleApplication {
   private RigidBodyControl    cube_phy;
   private RigidBodyControl    coin_phy;
  
+  //for audio nodes
+  private AudioNode circus_music;
+  private AudioNode coin_slot;
+  private AudioNode mach_crank;
+  private AudioNode ball_rel;
+  
+  
   static {
     /** Initialize the cannon ball geometry */
     sphere = new Sphere(32, 32, 0.4f, true, false);
@@ -95,6 +103,7 @@ public class Main extends SimpleApplication {
     initFloor();
     initCrossHairs();
     initKeys();
+    initAudio();
   }
  
   /**
@@ -150,7 +159,7 @@ public class Main extends SimpleApplication {
   
    /** A cube object for target practice */
   protected Geometry makeCube(String name, float x, float y, float z) {
-    Box box = new Box(1, 4, 2);
+    Box box = new Box(1, 3, 2);
     Geometry cube = new Geometry(name, box);
     cube.setLocalTranslation(x, y, z);
     Material mat1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -164,9 +173,9 @@ public class Main extends SimpleApplication {
     return cube;
   }
   
-  public void makeGumballMachine() {
+  protected void makeGumballMachine() {
     //make gumball machine
-    gM = makeCube("Gumball Machine", 0, 2f, 1f);    
+    gM = makeCube("Gumball Machine", 0, 4f, 1f);    
     gM.addControl((Control) new gumballMachine());
     gM.getControl(gumballMachine.class).setCount(5);
     gM.getControl(gumballMachine.class).resetAmtInSlot();
@@ -174,7 +183,7 @@ public class Main extends SimpleApplication {
   }
   
   //make all coins
-  public void makeCoins() {
+  protected void makeCoins() {
     //for stacked coins
     System.out.println("There are piles of coins");
     float j = 0.1f;
@@ -322,11 +331,11 @@ public class Main extends SimpleApplication {
   }
   
   //make individual gumballs w/ random color
-  public void makeGumballs(int rand_c) {
+  private void makeGumballs(int rand_c) {
       switch(rand_c) {
           case 1:
               ColorRGBA Red = new ColorRGBA(1,0,0,1);//red
-              gBall = makeGumball("gumball", 0, 3, 8, Red);
+              gBall = makeGumball("gumball", 0, 3, 5, Red);
               gBall.addControl((Control) new gumball());
               gBall.getControl(gumball.class).setColor("red");
               gBall.getControl(gumball.class).setValue(5);
@@ -334,7 +343,7 @@ public class Main extends SimpleApplication {
               break;
           case 2:
               ColorRGBA Green = new ColorRGBA(0,1,0,1);//green
-              gBall = makeGumball("gumball", 0, 3, 8, Green);
+              gBall = makeGumball("gumball", 0, 3, 5, Green);
               gBall.addControl((Control) new gumball());
               gBall.getControl(gumball.class).setColor("green");
               gBall.getControl(gumball.class).setValue(15);
@@ -342,7 +351,7 @@ public class Main extends SimpleApplication {
               break;
           case 3:
               ColorRGBA Blue = new ColorRGBA(0,0,1,1);//blue
-              gBall = makeGumball("gumball", 0, 3, 8, Blue);
+              gBall = makeGumball("gumball", 0, 3, 5, Blue);
               gBall.addControl((Control) new gumball());
               gBall.getControl(gumball.class).setColor("blue");
               gBall.getControl(gumball.class).setValue(50);
@@ -350,7 +359,7 @@ public class Main extends SimpleApplication {
               break;
           case 4:
               ColorRGBA Yellow = new ColorRGBA(1,1,0,1);//yellow
-              gBall = makeGumball("gumball", 0, 3, 8, Yellow);
+              gBall = makeGumball("gumball", 0, 3, 5, Yellow);
               gBall.addControl((Control) new gumball());
               gBall.getControl(gumball.class).setColor("yellow");
               gBall.getControl(gumball.class).setValue(35);
@@ -358,7 +367,7 @@ public class Main extends SimpleApplication {
               break;
           case 5:
               ColorRGBA Pink = new ColorRGBA(1,0.68f,0.68f,1);//pink
-              gBall = makeGumball("gumball", 0, 3, 8, Pink);
+              gBall = makeGumball("gumball", 0, 3, 5, Pink);
               gBall.addControl((Control) new gumball());
               gBall.getControl(gumball.class).setColor("pink");
               gBall.getControl(gumball.class).setValue(100);
@@ -378,7 +387,7 @@ public class Main extends SimpleApplication {
   /** This method creates one individual physical cannon ball.
    * By defaul, the ball is accelerated and flies
    * from the camera position in the camera direction.*/
-   public void makeCannonBall() {
+   private void makeCannonBall() {
     /** Create a cannon ball geometry and attach to scene graph. */
     Geometry ball_geo = new Geometry("cannon ball", sphere);
     ball_geo.setMaterial(stone_mat);
@@ -393,7 +402,35 @@ public class Main extends SimpleApplication {
     /** Accelerate the physcial ball to shoot it. */
     ball_phy.setLinearVelocity(cam.getDirection().mult(25));
   }
- 
+
+  //initialize audio nodes
+  private void initAudio() {
+      circus_music = new AudioNode(assetManager, "Sounds/CircusTheme.ogg");
+      circus_music.setLooping(true);
+      circus_music.setPositional(false);
+      circus_music.setVolume(1);
+      rootNode.attachChild(circus_music);
+      circus_music.play();
+      
+      coin_slot = new AudioNode(assetManager, "Sounds/CoinSlot.ogg");
+      coin_slot.setPositional(false);
+      coin_slot.setLooping(false);
+      coin_slot.setVolume(2);
+      rootNode.attachChild(coin_slot);
+      
+      mach_crank = new AudioNode(assetManager, "Sounds/Crank.ogg");
+      mach_crank.setPositional(false);
+      mach_crank.setLooping(false);
+      mach_crank.setVolume(2);
+      rootNode.attachChild(mach_crank);
+      
+      ball_rel = new AudioNode(assetManager, "Sounds/Ball.ogg");
+      ball_rel.setPositional(false);
+      ball_rel.setLooping(false);
+      ball_rel.setVolume(2);
+      rootNode.attachChild(ball_rel);
+  }
+   
   /** Initialize the materials used in this scene. */
   public void initMaterials() {
     stone_mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -469,8 +506,17 @@ public class Main extends SimpleApplication {
                 s = s.getParent();
                 if ("Gumball Machine".equals(results.getCollision(0).getGeometry().getName())){
                     gM.getControl(gumballMachine.class).turnCrank();
+                    mach_crank.playInstance();
+                    //to delay release of gumball until after audio finishes
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                    
                     if (gM.getControl(gumballMachine.class).makeGumball()){
                         makeGumballs(randInt(1,5));//random # btwn 1-5 for color
+                        ball_rel.playInstance();
                         gM.getControl(gumballMachine.class).resetAmtInSlot();
                     }
                     
@@ -483,6 +529,7 @@ public class Main extends SimpleApplication {
                     gM.getControl(gumballMachine.class).acceptCoin((Integer)s.getUserData("value"));
                     //remove coin from scene
                     shootables.detachChild(s);
+                    coin_slot.playInstance();
                     System.out.print("Machine has: ");
                     System.out.print(gM.getControl(gumballMachine.class).getAmtInSlot());
                     System.out.println(" cent(s)");
