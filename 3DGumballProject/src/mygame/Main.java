@@ -49,7 +49,7 @@ public class Main extends SimpleApplication {
   Material floor_mat;
   private Node shootables; //node for all objects
   private Node gumballMachine; //node for gumball machine parts
-  private Geometry gBall; //for gumballmachine and gumballs
+  private Geometry gBall, cBall; //for gumballmachine and gumballs
   
   /** Prepare geometries and physical nodes for gumballs, floor and cube. */
   private RigidBodyControl    ball_phy;
@@ -61,6 +61,7 @@ public class Main extends SimpleApplication {
   private RigidBodyControl    brick_phy;
   private RigidBodyControl    gumballm_phy;
   private static final Box    box;
+  private static final Box    box2;
  
   /** dimensions used for bricks and wall */
   private static final float brickLength = 5f;
@@ -73,6 +74,13 @@ public class Main extends SimpleApplication {
   private AudioNode mach_crank;
   private AudioNode ball_rel;
   
+  //for colors
+  private ColorRGBA Red = new ColorRGBA(1,0,0,1);//red
+  private ColorRGBA Green = new ColorRGBA(0,1,0,1);//green
+  private ColorRGBA Blue = new ColorRGBA(0,0,1,1);//blue
+  private ColorRGBA Yellow = new ColorRGBA(1,1,0,1);//yellow
+  private ColorRGBA Pink = new ColorRGBA(1,0.68f,0.68f,1);//pink
+  private ColorRGBA White =  new ColorRGBA(1,1,1,1);//white
   
   static {
     /** Initialize the cannon ball geometry */
@@ -81,6 +89,8 @@ public class Main extends SimpleApplication {
     /** Initialize the brick geometry */
     box = new Box(brickLength, brickHeight, brickWidth);
     box.scaleTextureCoordinates(new Vector2f(1f, .5f));
+    box2 = new Box(brickWidth, brickHeight, brickLength);
+    box2.scaleTextureCoordinates(new Vector2f(1f, .5f));
     /** Initialize the floor geometry */
     floor = new Box(60f, 0.1f, 40f);
     floor.scaleTextureCoordinates(new Vector2f(3, 6));
@@ -99,6 +109,7 @@ public class Main extends SimpleApplication {
     /** Configure cam to look at scene */
     cam.setLocation(new Vector3f(0, 6f, 18f));
     cam.lookAt(new Vector3f(0, 4f, 0), Vector3f.UNIT_Y);
+    flyCam.setMoveSpeed(10); //move camera faster
     
     //add sky model to world
     rootNode.attachChild(SkyFactory.createSky(
@@ -121,24 +132,6 @@ public class Main extends SimpleApplication {
     initWall();
   }
   
-  /** This loop builds a wall out of individual bricks. */
-  public void initWall() {
-    float height = 0;
-    for (int j = 0; j < 1; j++) {
-      for (int i = -5; i < 6; i++) {
-        //back wall
-          Vector3f vt =
-         new Vector3f(i * brickLength * 2, brickHeight + height, -35);
-        makeBrick(vt);
-        //front wall
-        Vector3f vt2 =
-         new Vector3f(i * brickLength * 2, brickHeight + height, 35);
-        makeBrick(vt2);
-      }
-      height += 2 * brickHeight;
-    }
-  }
-  
   public void makeBrick(Vector3f loc) {
     /** Create a brick geometry and attach to scene graph. */
     Geometry brick_geo = new Geometry("brick", box);
@@ -152,6 +145,21 @@ public class Main extends SimpleApplication {
     brick_geo.addControl(brick_phy);
     bulletAppState.getPhysicsSpace().add(brick_phy);
   }
+  
+  public void makeBrickSide(Vector3f loc) {
+    /** Create a brick geometry and attach to scene graph. */
+    Geometry brick_geo = new Geometry("brick", box2);
+    brick_geo.setMaterial(stone_mat);
+    rootNode.attachChild(brick_geo);
+    /** Position the brick geometry  */
+    brick_geo.setLocalTranslation(loc);
+    /** Make brick physical with a mass > 0.0f. */
+    brick_phy = new RigidBodyControl(0.0f);
+    /** Add physical brick to physics space. */
+    brick_geo.addControl(brick_phy);
+    bulletAppState.getPhysicsSpace().add(brick_phy);
+  }
+  
   
    protected Geometry makeSphere(String name, float x, float y, float z) {
     Sphere sphere_ball = new Sphere(40, 150, 0.8f, true, false);
@@ -171,6 +179,27 @@ public class Main extends SimpleApplication {
     return balloon;
   }
    
+  protected Geometry makeGumball(String name, Vector3f loc, ColorRGBA color) {
+    Sphere sphere_ball = new Sphere(35, 35, 0.8f, true, false);
+    sphere_ball.setTextureMode(TextureMode.Projected);
+    Geometry gumball = new Geometry(name, sphere_ball);
+    Material mat1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+    mat1.setColor("Color", color);
+    gumball.setMaterial(mat1);
+    gumball.setLocalTranslation(loc);
+    gumball.scale(0.7f);
+    
+    /** Make the ball physcial with a mass > 0.0f */
+    ball_phy = new RigidBodyControl(0.5f);
+    
+    /** Add physical ball to physics space. */
+    gumball.addControl(ball_phy);
+    bulletAppState.getPhysicsSpace().add(ball_phy);
+    
+    return gumball;
+  
+  }
+  
   protected Geometry makeGumball(String name, float x, float y, float z, ColorRGBA color) {
     Sphere sphere_ball = new Sphere(35, 35, 0.8f, true, false);
     sphere_ball.setTextureMode(TextureMode.Projected);
@@ -390,7 +419,7 @@ public class Main extends SimpleApplication {
   private void makeGumballs(int rand_c) {
       switch(rand_c) {
           case 1:
-              ColorRGBA Red = new ColorRGBA(1,0,0,1);//red
+              //ColorRGBA Red = new ColorRGBA(1,0,0,1);//red
               gBall = makeGumball("gumball", 0, 1.5f, 7, Red);
               gBall.addControl((Control) new gumball());
               gBall.getControl(gumball.class).setColor("red");
@@ -398,7 +427,7 @@ public class Main extends SimpleApplication {
               shootables.attachChild(gBall);
               break;
           case 2:
-              ColorRGBA Green = new ColorRGBA(0,1,0,1);//green
+              //ColorRGBA Green = new ColorRGBA(0,1,0,1);//green
               gBall = makeGumball("gumball", 0, 1.5f, 7, Green);
               gBall.addControl((Control) new gumball());
               gBall.getControl(gumball.class).setColor("green");
@@ -406,7 +435,7 @@ public class Main extends SimpleApplication {
               shootables.attachChild(gBall);
               break;
           case 3:
-              ColorRGBA Blue = new ColorRGBA(0,0,1,1);//blue
+              //ColorRGBA Blue = new ColorRGBA(0,0,1,1);//blue
               gBall = makeGumball("gumball", 0, 1.5f, 7, Blue);
               gBall.addControl((Control) new gumball());
               gBall.getControl(gumball.class).setColor("blue");
@@ -414,7 +443,7 @@ public class Main extends SimpleApplication {
               shootables.attachChild(gBall);
               break;
           case 4:
-              ColorRGBA Yellow = new ColorRGBA(1,1,0,1);//yellow
+              //ColorRGBA Yellow = new ColorRGBA(1,1,0,1);//yellow
               gBall = makeGumball("gumball", 0, 1.5f, 7, Yellow);
               gBall.addControl((Control) new gumball());
               gBall.getControl(gumball.class).setColor("yellow");
@@ -422,7 +451,7 @@ public class Main extends SimpleApplication {
               shootables.attachChild(gBall);
               break;
           case 5:
-              ColorRGBA Pink = new ColorRGBA(1,0.68f,0.68f,1);//pink
+              //ColorRGBA Pink = new ColorRGBA(1,0.68f,0.68f,1);//pink
               gBall = makeGumball("gumball", 0, 1.5f, 7, Pink);
               gBall.addControl((Control) new gumball());
               gBall.getControl(gumball.class).setColor("pink");
@@ -443,23 +472,64 @@ public class Main extends SimpleApplication {
   /** This method creates one individual physical cannon ball.
    * By defaul, the ball is accelerated and flies
    * from the camera position in the camera direction.*/
-   private void makeCannonBall() {
+   private void makeCannonBall(int g_color) {
     /** Create a cannon ball geometry and attach to scene graph. */
-    Geometry ball_geo = new Geometry("cannon ball", sphere);
-    ball_geo.scale(0.8f);
-    ball_geo.setMaterial(stone_mat);
-    rootNode.attachChild(ball_geo);
-    /** Position the cannon ball  */
-    ball_geo.setLocalTranslation(cam.getLocation());
-    /** Make the ball physcial with a mass > 0.0f */
-    ball_phy = new RigidBodyControl(1f);
+    
+    switch(g_color) {
+          case 1:
+              cBall = makeGumball("cannonball", cam.getLocation(), Red);
+              break;
+          case 2:
+              cBall = makeGumball("cannonball", cam.getLocation(), Green);
+              break;
+          case 3:
+              cBall = makeGumball("cannonball", cam.getLocation(), Blue);
+              break;
+          case 4:
+              cBall = makeGumball("cannonball", cam.getLocation(), Yellow);
+              break;
+          case 5:
+              cBall = makeGumball("cannonball", cam.getLocation(), Pink);
+              break;
+      }
     /** Add physical ball to physics space. */
-    ball_geo.addControl(ball_phy);
+    ball_phy = new RigidBodyControl(1f);
+    cBall.addControl(ball_phy);
     bulletAppState.getPhysicsSpace().add(ball_phy);
     /** Accelerate the physcial ball to shoot it. */
     ball_phy.setLinearVelocity(cam.getDirection().mult(25));
+    shootables.attachChild(cBall);
+    
   }
 
+   /** This loop builds a wall out of individual bricks. */
+  public void initWall() {
+    float height = 0;
+    for (int j = 0; j < 1; j++) {
+      for (int i = -5; i < 6; i++) {
+        //back wall
+          Vector3f vt =
+            new Vector3f(i * brickLength * 2, brickHeight + height, -35);
+            makeBrick(vt);
+        //front wall
+        Vector3f vt2 =
+            new Vector3f(i * brickLength * 2, brickHeight + height, 35);
+            makeBrick(vt2);
+      }
+      for (int k = -3; k < 4; k++) {
+          //left wall
+          Vector3f vt3 =
+            new Vector3f(-55, brickHeight, k * brickLength *2);
+            makeBrickSide(vt3);
+          //right wall
+          Vector3f vt4 =
+            new Vector3f(55, brickHeight, k * brickLength *2);
+            makeBrickSide(vt4); 
+      }
+      height += 2 * brickHeight;
+    }
+  }
+  
   //initialize audio nodes
   private void initAudio() {
       circus_music = new AudioNode(assetManager, "Sounds/CircusTheme.ogg");
@@ -557,6 +627,7 @@ public class Main extends SimpleApplication {
   
   private ActionListener actionListener = new ActionListener() {
       int g_color;
+      boolean taken_gball = false;
       public void onAction(String name, boolean keyPressed, float tpf) {
           if (name.equals("Click") && !keyPressed) {
             // 1. Reset results list.
@@ -614,6 +685,10 @@ public class Main extends SimpleApplication {
                     bulletAppState.getPhysicsSpace().remove(ball_phy);
                     results.getCollision(0).getGeometry().removeFromParent();
                     shootables.detachChild(results.getCollision(0).getGeometry());
+                    System.out.print("You can now shoot a ");
+                    System.out.print(results.getCollision(0).getGeometry().getUserData("color"));
+                    System.out.println(" gumball!");
+                    taken_gball = true;
                 }
             }
             
@@ -623,7 +698,15 @@ public class Main extends SimpleApplication {
               //default refill by 5 gumballs
           }//for "Refill"
           else if (name.equals("Shoot") && !keyPressed) {
-              makeCannonBall();
+              if (taken_gball) {
+                  makeCannonBall(g_color);
+                  g_color = 0;
+                  taken_gball = false;
+              }
+              else {
+                  System.out.println("No cannonball. You must get a gumball first");
+              }
+              
           }//for "Shoot"
           
           
