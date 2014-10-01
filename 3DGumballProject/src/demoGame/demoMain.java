@@ -1,4 +1,4 @@
-package mygame;
+package demoGame;
  
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.TextureKey;
@@ -30,9 +30,10 @@ import com.jme3.texture.Texture.WrapMode;
 import com.jme3.util.SkyFactory;
 import java.util.Random;
 
-public class Main extends SimpleApplication { 
+
+public class demoMain extends SimpleApplication { 
   public static void main(String args[]) {
-    Main app = new Main();
+    demoMain app = new demoMain();
     app.start();
     
     /** Disable the default scene graph statistics */
@@ -48,7 +49,7 @@ public class Main extends SimpleApplication {
   Material stone_mat;
   Material floor_mat;
   private Node shootables; //node for all objects
-  private Node gumballMachine; //node for gumball machine parts
+  //private Node gumballMachine; //node for gumball machine parts
   private Geometry gBall, cBall; //for gumballmachine and gumballs
   
   /** Prepare geometries and physical nodes for gumballs, floor and cube. */
@@ -118,18 +119,19 @@ public class Main extends SimpleApplication {
     
     //node for all gumballmachine world objects
     shootables = new Node("Shootables");
-    gumballMachine = new Node("GumballMachine");
+    //gumballMachine = new Node("GumballMachine");
     rootNode.attachChild(shootables);
     
-    makeGumballMachine();
-    makeCoins();
+    //makeGumballMachine();
+    //makeCoins();
     
     /** Initialize the scene, materials, and physics space */
+    initAudio();
     initMaterials();
+    makeGBall();
     initFloor();
     initCrossHairs();
     initKeys();
-    initAudio();
     initWall();
   }
   
@@ -238,184 +240,7 @@ public class Main extends SimpleApplication {
     return cube;
   }
   
-  protected void makeGumballMachine() {
-    //make gumball machine
-    Spatial gM_bot = assetManager.loadModel("Models/GM_buttom/GM_buttom.mesh.xml");
-    gM_bot.setLocalTranslation(0, 7f, 1f);
-    gM_bot.scale(3f,3f,3f);
-    gumballMachine.attachChild(gM_bot);
-    
-    Spatial gM_mid = assetManager.loadModel("Models/GM_middle/GM_middle.mesh.xml");
-    gM_mid.setLocalTranslation(0, 7f, 1f);
-    gM_mid.scale(3f,3f,3f);
-    gumballMachine.attachChild(gM_mid);
-    
-    Spatial gM_top = assetManager.loadModel("Models/GM_top/GM_top.mesh.xml");
-    gM_top.setLocalTranslation(0, 7f, 1f);
-    gM_top.scale(3f,3f,3f);
-    gumballMachine.attachChild(gM_top);
-    gumballMachine.setName("Gumball Machine");
-    gumballm_phy = new RigidBodyControl(0.0f);
-    gumballMachine.addControl(gumballm_phy);
-    bulletAppState.getPhysicsSpace().add(gumballm_phy);
-    
-    shootables.attachChild(gumballMachine);
-    
-    //gM = makeCube("Gumball Machine", 0, 4f, 1f);    
-    gumballMachine.addControl((Control) new gumballMachine());
-    gumballMachine.getControl(gumballMachine.class).setCount(5);
-    gumballMachine.getControl(gumballMachine.class).resetAmtInSlot();
-    
-  }
-  
-  //make all coins
-  protected void makeCoins() {
-    //for stacked coins
-    System.out.println("There are piles of coins");
-    float j = 0.1f;
-    float k = j;
-    for (int i = 0; i < 10; i++) {
-        
-        Spatial Quarter = assetManager.loadModel("Models/SilverCoin/SilverCoin.mesh.xml");
-        Quarter.setName("Quarter");
-        Quarter.scale(1f, 1f, 1f);
-        Quarter.rotate(0f, 0.0f, 0.0f);
-        Quarter.setLocalTranslation(5, j, 0);
-        Quarter.addControl((Control) new Coin());
-        Quarter.getControl(Coin.class).setValue(25);
-        Quarter.getControl(Coin.class).setCount(1);
-        shootables.attachChild(Quarter);
-        /** Make the ball physcial with a mass > 0.0f */
-        coin_phy = new RigidBodyControl(0.1f);
-        /** Add physical coin to physics space. */
-        Quarter.addControl(coin_phy);
-        bulletAppState.getPhysicsSpace().add(coin_phy);
-        
-        Spatial Nickel = assetManager.loadModel("Models/SilverCoin/SilverCoin.mesh.xml");
-        Nickel.setName("Nickel");
-        Nickel.scale(0.8f, 0.8f, 0.8f);
-        Nickel.rotate(0f, 0.0f, 0.0f);
-        Nickel.setLocalTranslation(8, j, 0);
-        Nickel.addControl((Control) new Coin());
-        Nickel.getControl(Coin.class).setValue(5);
-        Nickel.getControl(Coin.class).setCount(1);
-        shootables.attachChild(Nickel);
-        /** Make the ball physcial with a mass > 0.0f */
-        coin_phy = new RigidBodyControl(0.1f);
-        /** Add physical coin to physics space. */
-        Nickel.addControl(coin_phy);
-        bulletAppState.getPhysicsSpace().add(coin_phy);
-        
-        Spatial Dime = assetManager.loadModel("Models/SilverCoin/SilverCoin.mesh.xml");
-        Dime.setName("Dime");
-        Dime.scale(0.5f, 0.5f, 0.5f);
-        Dime.rotate(0f, 0.0f, 0.0f);
-        Dime.setLocalTranslation(-5, k, 0);
-        Dime.addControl((Control) new Coin());
-        Dime.getControl(Coin.class).setValue(10);
-        Dime.getControl(Coin.class).setCount(1);
-        shootables.attachChild(Dime);
-        /** Make the ball physcial with a mass > 0.0f */
-        coin_phy = new RigidBodyControl(0.01f);
-        /** Add physical coin to physics space. */
-        Dime.addControl(coin_phy);
-        bulletAppState.getPhysicsSpace().add(coin_phy);
-        
-        Spatial Penny = assetManager.loadModel("Models/BrownCoin/BrownCoin.mesh.xml");
-        Penny.setName("Penny");
-        Penny.scale(0.5f, 0.5f, 0.5f);
-        Penny.rotate(0f, 0.0f, 0.0f);
-        Penny.setLocalTranslation(-9, k, 0);
-        Penny.addControl((Control) new Coin());
-        Penny.getControl(Coin.class).setValue(1);
-        Penny.getControl(Coin.class).setCount(1);
-        shootables.attachChild(Penny);
-        /** Make the ball physcial with a mass > 0.0f */
-        coin_phy = new RigidBodyControl(0.1f);
-        /** Add physical coin to physics space. */
-        Penny.addControl(coin_phy);
-        bulletAppState.getPhysicsSpace().add(coin_phy);
-        
-        j+=0.1;
-        k+=0.05;
-    }
-    
-    
-    //for falling coins
-    /*System.out.println("It's raining coins!");
-    int j = 1;
-    for (int i = 0; i < 10; i++) {
-        
-        Spatial Quarter = assetManager.loadModel("Models/SilverCoin/SilverCoin.mesh.xml");
-        Quarter.setName("Quarter");
-        Quarter.scale(1f, 1f, 1f);
-        Quarter.rotate(2f, -3.0f, 0.0f);
-        Quarter.setLocalTranslation(3, j, 0);
-        Quarter.addControl((Control) new Coin());
-        Quarter.getControl(Coin.class).setValue(25);
-        Quarter.getControl(Coin.class).setCount(1);
-        shootables.attachChild(Quarter);
-        /// Make the ball physcial with a mass > 0.0f
-        coin_phy = new RigidBodyControl(0.1f);
-        // Add physical coin to physics space. 
-        Quarter.addControl(coin_phy);
-        bulletAppState.getPhysicsSpace().add(coin_phy);
-        
-        Spatial Nickel = assetManager.loadModel("Models/SilverCoin/SilverCoin.mesh.xml");
-        Nickel.setName("Nickel");
-        Nickel.scale(0.8f, 0.8f, 0.8f);
-        Nickel.rotate(2f, -3.0f, 0.0f);
-        Nickel.setLocalTranslation(6, j, 0);
-        Nickel.addControl((Control) new Coin());
-        Nickel.getControl(Coin.class).setValue(5);
-        Nickel.getControl(Coin.class).setCount(1);
-        shootables.attachChild(Nickel);
-        // Make the ball physcial with a mass > 0.0f 
-        coin_phy = new RigidBodyControl(0.1f);
-        // Add physical coin to physics space. 
-        Nickel.addControl(coin_phy);
-        bulletAppState.getPhysicsSpace().add(coin_phy);
-        
-        Spatial Dime = assetManager.loadModel("Models/SilverCoin/SilverCoin.mesh.xml");
-        Dime.setName("Dime");
-        Dime.scale(0.5f, 0.5f, 0.5f);
-        Dime.rotate(2f, -3.0f, 0.0f);
-        Dime.setLocalTranslation(-3, j, 0);
-        Dime.addControl((Control) new Coin());
-        Dime.getControl(Coin.class).setValue(10);
-        Dime.getControl(Coin.class).setCount(1);
-        shootables.attachChild(Dime);
-        // Make the ball physcial with a mass > 0.0f 
-        coin_phy = new RigidBodyControl(0.01f);
-        // Add physical coin to physics space. 
-        Dime.addControl(coin_phy);
-        bulletAppState.getPhysicsSpace().add(coin_phy);
-        
-        Spatial Penny = assetManager.loadModel("Models/BrownCoin/BrownCoin.mesh.xml");
-        Penny.setName("Penny");
-        Penny.scale(0.5f, 0.5f, 0.5f);
-        Penny.rotate(2f, -3.0f, 0.0f);
-        Penny.setLocalTranslation(-6, j, 0);
-        Penny.addControl((Control) new Coin());
-        Penny.getControl(Coin.class).setValue(1);
-        Penny.getControl(Coin.class).setCount(1);
-        shootables.attachChild(Penny);
-        // Make the ball physcial with a mass > 0.0f 
-        coin_phy = new RigidBodyControl(0.1f);
-        // Add physical coin to physics space.
-        Penny.addControl(coin_phy);
-        bulletAppState.getPhysicsSpace().add(coin_phy);
-        
-        j+=1;
-    }*/
-   
-    // You must add a light to make the model visible
-    DirectionalLight sun = new DirectionalLight();
-    sun.setDirection(new Vector3f(-0.1f, -0.7f, -1.0f));
-    shootables.addLight(sun);
-
-  }
-  
+ 
   //make individual gumballs w/ random color
   private void makeGumballs(int rand_c) {
       switch(rand_c) {
@@ -587,7 +412,14 @@ public class Main extends SimpleApplication {
     Texture tex3 = assetManager.loadTexture(key3);
     tex3.setWrap(WrapMode.Repeat);
     floor_mat.setTexture("ColorMap", tex3);
+  
     
+  }
+  
+  public void makeGBall() {   
+    int g_color = randInt(1,5);
+    makeGumballs(g_color);//random # btwn 1-5 for color
+    ball_rel.playInstance();
   }
  
   /** Make a solid floor and add it to the scene. */
@@ -629,6 +461,10 @@ public class Main extends SimpleApplication {
     inputManager.addMapping("Refill",
       new KeyTrigger(KeyInput.KEY_R));//R button is trigger for refill action
     inputManager.addListener(actionListener, "Refill");
+    
+    inputManager.addMapping("Create",
+      new KeyTrigger(KeyInput.KEY_G));//G button to make new gumballs
+    inputManager.addListener(actionListener, "Create");
   }
   
   
@@ -651,7 +487,7 @@ public class Main extends SimpleApplication {
                 Spatial p = s.getParent();
                 s = p.getParent();
                 //System.out.println("You hit " + s.getName());
-                if ("Gumball Machine".equals(s.getName())){
+                /*if ("Gumball Machine".equals(s.getName())){
                     gumballMachine.getControl(gumballMachine.class).turnCrank();
                     mach_crank.playInstance();
                     //to delay release of gumball until after audio finishes
@@ -682,11 +518,28 @@ public class Main extends SimpleApplication {
                     System.out.print(gumballMachine.getControl(gumballMachine.class).getAmtInSlot());
                     System.out.println(" cent(s)");
                 }
-                else if ("gumball".equals(results.getCollision(0).getGeometry().getName())){
+                else */if ("gumball".equals(results.getCollision(0).getGeometry().getName())){
                     System.out.println("Taking gumball...");
                     System.out.print("Gumball has color ");
                     System.out.print(results.getCollision(0).getGeometry().getUserData("color"));
                     System.out.print(" and value of ");
+                    String color = results.getCollision(0).getGeometry().getUserData("color");
+                    if ("red".equals(color)) {
+                        g_color = 1;
+                    }
+                    else if ("green".equals(color)) {
+                        g_color = 2;
+                    }
+                    else if ("blue".equals(color)) {
+                        g_color = 3;
+                    }
+                    else if ("yellow".equals(color)) {
+                        g_color = 4;
+                    }
+                    else if ("pink".equals(color)) {
+                        g_color = 5;
+                    }
+                    
                     System.out.println(results.getCollision(0).getGeometry().getUserData("value"));
                     //remove gumball from scene
                     bulletAppState.getPhysicsSpace().remove(ball_phy);
@@ -700,22 +553,25 @@ public class Main extends SimpleApplication {
             }
             
           }//for "Crank"
-          else if (name.equals("Refill") && !keyPressed) {
+          /*else if (name.equals("Refill") && !keyPressed) {
               gumballMachine.getControl(gumballMachine.class).refill(5);
               //default refill by 5 gumballs
-          }//for "Refill"
+          }*///for "Refill"
           else if (name.equals("Shoot") && !keyPressed) {
-              if (taken_gball) {
+              //if (taken_gball) {
                   makeCannonBall(g_color);
                   ball_whoosh.playInstance();
                   g_color = 0;
                   taken_gball = false;
-              }
+              /*}
               else {
                   System.out.println("No cannonball. You must get a gumball first");
-              }
+              }*/
               
           }//for "Shoot"
+          else if (name.equals("Create") && !keyPressed) {
+              makeGBall();
+          }
           
           
           
