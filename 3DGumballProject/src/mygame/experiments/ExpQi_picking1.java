@@ -247,10 +247,21 @@ public class ExpQi_picking1 extends SimpleApplication{
     /** Make the ball physcial with a mass > 0.0f */
     ball_phy = new RigidBodyControl(1f);
     /** Add physical ball to physics space. */
+    
     ball_geo.addControl(ball_phy);
     bulletAppState.getPhysicsSpace().add(ball_phy);
+
     /** Accelerate the physcial ball to shoot it. */
     //ball_phy.setLinearVelocity(cam.getDirection().mult(50)); 
+    
+    //=======
+          Vector3f bounce = new Vector3f(0, 8f, 0);    
+          ball_phy.clearForces();
+          ball_phy.setLinearVelocity(ball_phy.getLinearVelocity().clone().setY(0));
+          ball_phy.applyImpulse(bounce.mult(1), Vector3f.ZERO); 
+
+     //========
+           
     return ball_geo;
   }
     
