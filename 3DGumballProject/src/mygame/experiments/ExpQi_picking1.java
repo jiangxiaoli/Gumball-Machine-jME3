@@ -5,6 +5,7 @@
 package mygame.experiments;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.asset.TextureKey;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.collision.CollisionResults;
@@ -23,7 +24,8 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Sphere;
-import com.jme3.scene.shape.Sphere.TextureMode;
+import com.jme3.texture.Texture;
+import com.jme3.texture.Texture.WrapMode;
 
 
 
@@ -55,10 +57,13 @@ public class ExpQi_picking1 extends SimpleApplication{
   
   /** Prepare geometries and physical nodes for cannon balls. */
   private RigidBodyControl    ball_phy;
-  private static final Sphere sphere;
+  private static Sphere sphere;
   private RigidBodyControl    floor_phy;
-  private static final Box    floor;
+  private static Box    floor;
   
+  Geometry gumball, gumball2;
+  Vector3f bounceUp = new Vector3f(0, 8f, -0.3f);  
+  Vector3f bounceDown = new Vector3f(0f, 2, -0.3f);  
     static {
     /** Initialize the cannon ball geometry */
     sphere = new Sphere(32, 32, 0.55f, true, false);
@@ -66,6 +71,7 @@ public class ExpQi_picking1 extends SimpleApplication{
     /** Initialize the floor geometry */
     floor = new Box(10f, 0.1f, 5f);
     floor.scaleTextureCoordinates(new Vector2f(3, 6));
+   
   }
  
   
@@ -79,9 +85,11 @@ public class ExpQi_picking1 extends SimpleApplication{
     //make mouse pointer  
     flyCam.setDragToRotate(true);
     
+    
+    
     /** Configure cam to look at scene */
-   // cam.setLocation(new Vector3f(0, 4f, 6f));
-   // cam.lookAt(new Vector3f(2, 2, 0), Vector3f.UNIT_Y);
+    // cam.setLocation(new Vector3f(-6, 2f, 4f));
+    //cam.lookAt(new Vector3f(0, 2, 0), Vector3f.UNIT_Y);
     
     //flyCam.setMoveSpeed(1);
     //inputManager.setCursorVisible(true);
@@ -96,12 +104,13 @@ public class ExpQi_picking1 extends SimpleApplication{
     /** create four sphere as coins, one Cube as gumball machine */
     shootables = new Node("Shootables");
     rootNode.attachChild(shootables);
-    shootables.attachChild(makeSphere("coin1", -2f, 0f, 1f));
-    shootables.attachChild(makeSphere("coin2", -2f, 1.2f,1f));
-    shootables.attachChild(makeSphere("coin3", -2f, 2.4f,1f));
-    shootables.attachChild(makeSphere("coin4", -2f, -1.2f,1f));
+    shootables.attachChild(makeSphere("coin1", -2f, 0f, -3f));
+    shootables.attachChild(makeSphere("coin2", -2f, 1.2f,-3f));
+    shootables.attachChild(makeSphere("coin3", -2f, 2.4f,-3f));
+    shootables.attachChild(makeSphere("coin4", -2f, -1.2f,-3f));
     shootables.attachChild(makeCube("gumball machine",1f, -2f, -5f));
-    shootables.attachChild(makeFloor());   
+    shootables.attachChild(makeFloor());    
+    
 
   }
   
@@ -166,13 +175,7 @@ public class ExpQi_picking1 extends SimpleApplication{
             System.out.println(target.getName() + " inserted.");
             
             //set text in screen
-            guiNode.detachAllChildren();  // first clear the previous           
-            BitmapText showText = new BitmapText(guiFont, false);          
-            showText.setSize(guiFont.getCharSet().getRenderedSize());      // font size
-            showText.setColor(ColorRGBA.Blue);                             // font color
-            showText.setText(coinName + " inserted. You can turn the crank");             // the text
-            showText.setLocalTranslation(300, showText.getLineHeight()+20, 0); // position
-            guiNode.attachChild(showText);   
+             showText(coinName + " inserted. You can turn the crank");  
             
           } else if (target.getName().equals("gumball machine") && hasCoin) {  
                 // hit gumball machine
@@ -181,24 +184,34 @@ public class ExpQi_picking1 extends SimpleApplication{
             hasCoin = false;
 
              // make a gumball
-            Geometry gumball= makeBigSphere("gumball", 1.5f, -2f, 2f);
-            shootables.attachChild(gumball);
-
+            if(coinName.equals("coin2") ){
+                gumball2 = makeBigSphere("gumball2", 1.5f, -2f, 2f);
+                shootables.attachChild(gumball2);    //this gumball after click can bounce
+                showText("Here is your gumball.");  
+            }else {
+                gumball = makeBigSphere("gumball", 1.5f, -2f, 2f);
+                shootables.attachChild(gumball);  
+                showText("Here is your gumball.");  
+            }
              // gumball.move(1.50f, -2f, 2.5f);
-            target.rotate(0, intensity, 0);    //gumball machine rotate
-
-            //let the gumball bounce   +++++++++++++++++++ still working on
-          
+            target.rotate(0, intensity, 0);    //gumball machine rotate   
             
-            //show text
-            guiNode.detachAllChildren();  // first clear the previous  text         
-            BitmapText showText = new BitmapText(guiFont, false);          
-            showText.setSize(guiFont.getCharSet().getRenderedSize());      // font size
-            showText.setColor(ColorRGBA.Blue);                             // font color
-            showText.setText(" Here is your gumball");             // the text
-            showText.setLocalTranslation(300, showText.getLineHeight()+20, 0); // position
-            guiNode.attachChild(showText);             
-          }  //end of else if
+          }else if(target.getName().equals("gumball")){                   
+                //gumball disppear
+                shootables.detachChild(gumball); 
+                //show text              
+                showText("Now you took your gumball");   
+          } else if(target.getName().equals("gumball2")){  
+              
+                showText("Now your gumball can bounce");   
+                ball_phy = new RigidBodyControl(1f);           
+                target.addControl(ball_phy);
+                bulletAppState.getPhysicsSpace().add(ball_phy);
+                ball_phy.clearForces();
+                ball_phy.setLinearVelocity(ball_phy.getLinearVelocity().clone().setY(0));
+                ball_phy.applyImpulse(new Vector3f(0, 18f, 0), Vector3f.ZERO);
+          }         
+                  
         } else {
           // No hits? Then remove the red mark.
           rootNode.detachChild(mark);
@@ -235,7 +248,7 @@ public class ExpQi_picking1 extends SimpleApplication{
     protected Geometry makeBigSphere(String name, float x, float y, float z) {
  
      /** Create a gumball geometry and attach to scene graph. */
-    Geometry ball_geo = new Geometry("gumball", sphere);
+    Geometry ball_geo = new Geometry(name, sphere);
     
     /** Position the gumballl  */
     ball_geo.setLocalTranslation(x, y, z);
@@ -246,6 +259,7 @@ public class ExpQi_picking1 extends SimpleApplication{
          
     /** Make the ball physcial with a mass > 0.0f */
     ball_phy = new RigidBodyControl(1f);
+    
     /** Add physical ball to physics space. */
     
     ball_geo.addControl(ball_phy);
@@ -254,12 +268,12 @@ public class ExpQi_picking1 extends SimpleApplication{
     /** Accelerate the physcial ball to shoot it. */
     //ball_phy.setLinearVelocity(cam.getDirection().mult(50)); 
     
-    //=======
-          Vector3f bounce = new Vector3f(0, 8f, 0);    
+    //=======       
           ball_phy.clearForces();
           ball_phy.setLinearVelocity(ball_phy.getLinearVelocity().clone().setY(0));
-          ball_phy.applyImpulse(bounce.mult(1), Vector3f.ZERO); 
-
+          ball_phy.applyImpulse(bounceUp, Vector3f.ZERO); 
+          //ball_phy.applyImpulse(bounceDown.mult(1), Vector3f.ZERO); 
+                  
      //========
            
     return ball_geo;
@@ -267,13 +281,40 @@ public class ExpQi_picking1 extends SimpleApplication{
     
    /** A floor to show that the "shot" can go through several objects. */
   protected Geometry makeFloor() {
+   
+    /*  
     Box box = new Box(15, .2f, 15);
     Geometry floor = new Geometry("the Floor", box);
     floor.setLocalTranslation(0, -4, -5);
     Material mat1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
     mat1.setColor("Color", ColorRGBA.Gray );
     floor.setMaterial(mat1);
-    return floor;
+    return floor;*/
+ 
+      
+     /** Initialize the floor geometry */
+    floor = new Box(15, .2f, 15);
+   // floor.scaleTextureCoordinates(new Vector2f(3, 6));
+    
+    floor_mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+    TextureKey key3 = new TextureKey("Textures/Terrain/Pond/Pond.jpg");
+    key3.setGenerateMips(true);
+    Texture tex3 = assetManager.loadTexture(key3);
+    tex3.setWrap(WrapMode.Repeat);
+    floor_mat.setTexture("ColorMap", tex3);
+         
+    Geometry floor_geo = new Geometry("Floor", floor);
+    floor_geo.setMaterial(floor_mat);
+    floor_geo.setLocalTranslation(0, -6f, -5);
+ 
+    /* Make the floor physical with mass 0.0f! */
+    floor_phy = new RigidBodyControl(0.0f);
+    floor_geo.addControl(floor_phy);
+    bulletAppState.getPhysicsSpace().add(floor_phy);      
+      
+    return floor_geo; 
+      
+      
   }
   
   /** A red ball that marks the last spot that was "hit" by the "shot". */
@@ -297,6 +338,22 @@ public class ExpQi_picking1 extends SimpleApplication{
     guiNode.attachChild(ch);
   }
 
+  /** show text on the screen */
+  
+  protected void showText(String text){
+     
+                    
+    guiNode.detachAllChildren();  // first clear the previous  text        
+    BitmapText showText = new BitmapText(guiFont, false);          
+    showText.setSize(guiFont.getCharSet().getRenderedSize());      // font size
+    showText.setColor(ColorRGBA.Blue);                             // font color
+    showText.setText(text);             // the text
+    showText.setLocalTranslation(300, showText.getLineHeight()+20, 0); // position
+    guiNode.attachChild(showText);   
+      
+  }
+     
+             
   
  
 }
