@@ -27,24 +27,6 @@ public class NoCoinState extends AbstractControl implements State {
         System.out.println("You need to insert money first!");
     }
     
-    public boolean makeGumball() {
-        return false;
-    }
-    
-    /*private void dispense() {
-        System.out.println("Cannot dispense. Insert coins first.");
-    }*/
-    
-    /*public int getAmtInSlot() {
-        //System.out.println(gMach.getPayment());
-        return gMach.getPayment();
-    }
-    
-    public void resetAmtInSlot() {
-        spatial.setUserData("payment", 0);
-        dispense = false;
-    }*/
-    
     @Override
     protected void controlUpdate(float tpf) {
         if (spatial != null) {

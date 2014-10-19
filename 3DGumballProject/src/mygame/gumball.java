@@ -5,6 +5,10 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.control.AbstractControl;
 
+/* This class is the control class for the gumball spatials generated
+ * through the gumballMachine game logic.
+ */
+
 public class gumball extends AbstractControl{
     public gumball() {
         

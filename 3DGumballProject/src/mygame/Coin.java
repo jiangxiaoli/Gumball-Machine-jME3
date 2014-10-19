@@ -5,6 +5,10 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.control.AbstractControl;
 
+/* This class is the control class for coins used in in the gumball machine
+ * world in order to purchase gumballs from the gumballMachine.
+ */
+
 public class Coin extends AbstractControl{
            
     public Coin(){

@@ -4,10 +4,16 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.control.AbstractControl;
 
+/* This class is the control class for the gumball machine spatial node, which
+ * is composed of 3 model parts in the jME world. 
+ * 
+ * The gumballMachine is implemented using the STATE MACHINE design pattern
+ * using 4 states: NoCoinState, HasCoinState, HasGPriceState and SoldOutState.
+ */
+
 public class gumballMachine extends AbstractControl{
-    //private int gBAmount = 25; //gumball price
-    private boolean dispense = false; //if gumball was dispensed or not
-    private State state;
+    private boolean dispense = false; //if gumball should be dispensed or not
+    private State state; //state of gumballMachine
     private State NoCoinState;
     private State HasCoinState;
     private State HasGPriceState;
@@ -18,10 +24,10 @@ public class gumballMachine extends AbstractControl{
         HasCoinState = new HasCoinState(this);
         HasGPriceState = new HasGPriceState(this);
         SoldOutState = new SoldOutState(this);
-        state = NoCoinState;
+        state = NoCoinState; //initialize to NoCoinState
     }
     
-    public void setPayment(int value) {
+    protected void setPayment(int value) {
         spatial.setUserData("payment", value);
     }
     
@@ -29,7 +35,7 @@ public class gumballMachine extends AbstractControl{
         return (Integer)spatial.getUserData("payment");
     }
     
-    public void setCount(int count) {
+    protected void setCount(int count) {
         spatial.setUserData("gCount",count);
     }
     
@@ -38,6 +44,7 @@ public class gumballMachine extends AbstractControl{
     }
     
     public void setGBallPrice(int price) {
+        //set gumball price
         spatial.setUserData("price",price);
     }
     
@@ -80,7 +87,7 @@ public class gumballMachine extends AbstractControl{
     }
     
 
-    /*Machine Functions*/
+    /*State Machine Functions*/
     public void acceptCoin(int value) {
         state.acceptCoin(value);
     }
@@ -89,19 +96,20 @@ public class gumballMachine extends AbstractControl{
         state.turnCrank();
     }
     
+    /*Gumball Machine Functions*/
     public void refill(int gumballs) {
         int amount = getCount();
         amount+=gumballs;
         spatial.setUserData("gCount", amount);
-        System.out.println("Refilling gumball machine..");
+        System.out.println("Refilling gumball machine...");
         System.out.println("There are now " + amount + " gumballs in the machine!");
-        state = NoCoinState;
+        System.out.println("Sorry, cannot return your " + getPayment() + " cents");
+        state = NoCoinState; //resets state
     }
     
     public void resetAmtInSlot() {
         spatial.setUserData("payment", 0);
-        //System.out.println(spatial.getUserData("payment"));
-        dispense = false;
+        dispense = false; //reset flag for releasing gumball to false
     }
     
     
