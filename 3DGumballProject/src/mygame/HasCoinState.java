@@ -4,35 +4,30 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.control.AbstractControl;
 
-public class NoCoinState extends AbstractControl implements State {
+public class HasCoinState extends AbstractControl implements State {
     gumballMachine gMach;
     
-    public NoCoinState(gumballMachine gMach) {
+    public HasCoinState(gumballMachine gMach) {
         this.gMach = gMach;
     }
     
     public void acceptCoin(int value) {
-        int curr_amt = 0;
+        int curr_amt = gMach.getPayment();
         curr_amt += value;
         gMach.setPayment(curr_amt);
         if (curr_amt >= gMach.getGBallPrice()){
             gMach.setState(gMach.getHasGPriceState());
         }
-        else {
-            gMach.setState(gMach.getHasCoinState());
-        }
     }
     
     public void turnCrank() {
-        System.out.println("You need to insert money first!");
+        int remain = gMach.getGBallPrice() - gMach.getPayment();
+        System.out.println("You still need to put in " + remain + " cents");
     }
-    
-    public boolean makeGumball() {
-        return false;
-    }
+   
     
     /*private void dispense() {
-        System.out.println("Cannot dispense. Insert coins first.");
+        
     }*/
     
     /*public int getAmtInSlot() {

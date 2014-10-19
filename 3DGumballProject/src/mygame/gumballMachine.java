@@ -1,4 +1,3 @@
-
 package mygame;
 
 import com.jme3.renderer.RenderManager;
@@ -6,10 +5,28 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.scene.control.AbstractControl;
 
 public class gumballMachine extends AbstractControl{
-    private int gBAmount = 25; //gumball amount
+    //private int gBAmount = 25; //gumball price
     private boolean dispense = false; //if gumball was dispensed or not
+    private State state;
+    private State NoCoinState;
+    private State HasCoinState;
+    private State HasGPriceState;
+    private State SoldOutState;
     
     public gumballMachine() {
+        NoCoinState = new NoCoinState(this);
+        HasCoinState = new HasCoinState(this);
+        HasGPriceState = new HasGPriceState(this);
+        SoldOutState = new SoldOutState(this);
+        state = NoCoinState;
+    }
+    
+    public void setPayment(int value) {
+        spatial.setUserData("payment", value);
+    }
+    
+    public int getPayment() {
+        return (Integer)spatial.getUserData("payment");
     }
     
     public void setCount(int count) {
@@ -20,27 +37,56 @@ public class gumballMachine extends AbstractControl{
         return (Integer)spatial.getUserData("gCount");
     }
     
-    public void turnCrank() {
-        if (getCount() > 0) {
-            System.out.println("Crank turned!");
-            if (hasGBAmount()){
-                dispense();
-                dispense = true;
-                System.out.println(spatial.getUserData("gCount") + " gumball(s) remaining");
-            }
-            else {
-                int put_in = getAmtInSlot();
-                int remaining = gBAmount - put_in;
-                System.out.println("You still need to put in " + remaining + " cent(s)");
-            }
-        }
-        else {
-            System.out.println("Crank turned, but the gumball machine is out of gumballs!");
-        }
+    public void setGBallPrice(int price) {
+        spatial.setUserData("price",price);
+    }
+    
+    public int getGBallPrice() {
+        return (Integer)spatial.getUserData("price");
+    }
+    
+    protected void setDispense() {
+        dispense = true;
     }
     
     public boolean makeGumball() {
         return dispense;
+    }
+    
+
+    /*For States*/
+    public State getState() {
+        return state;
+    }
+    
+    public void setState(State newState) {
+        state = newState;
+    }
+    
+    public State getNoCoinState() {
+        return NoCoinState;
+    }
+    
+    public State getHasCoinState() {
+        return HasCoinState;
+    }
+    
+    public State getHasGPriceState() {
+        return HasGPriceState;
+    }
+    
+    public State SoldOutState() {
+        return SoldOutState;
+    }
+    
+
+    /*Machine Functions*/
+    public void acceptCoin(int value) {
+        state.acceptCoin(value);
+    }
+    
+    public void turnCrank() {
+        state.turnCrank();
     }
     
     public void refill(int gumballs) {
@@ -49,44 +95,18 @@ public class gumballMachine extends AbstractControl{
         spatial.setUserData("gCount", amount);
         System.out.println("Refilling gumball machine..");
         System.out.println("There are now " + amount + " gumballs in the machine!");
-    }
-    
-    private void dispense() {
-        int count = getCount();
-        count--;
-        setCount(count);
-    }
-    
-    public void acceptCoin(int coin_amt) {
-        int curr_amt = getAmtInSlot();
-        curr_amt += coin_amt;
-        spatial.setUserData("payment", curr_amt);
+        state = NoCoinState;
     }
     
     public void resetAmtInSlot() {
         spatial.setUserData("payment", 0);
+        //System.out.println(spatial.getUserData("payment"));
         dispense = false;
     }
     
-    public int getAmtInSlot() {
-        return (Integer)spatial.getUserData("payment");
-    }
     
-    public boolean hasGBAmount() {
-        if ((Integer)spatial.getUserData("payment") >= gBAmount) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
     @Override
     protected void controlUpdate(float tpf) {
-        if (spatial != null) {
-            //System.out.println("Do something here");
-           
-        }
         
     }
 
