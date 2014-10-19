@@ -118,13 +118,15 @@ public class Main extends SimpleApplication {
     
     //node for all gumballmachine world objects
     shootables = new Node("Shootables");
+    
+    //node for gumball machine
     gumballMachine = new Node("GumballMachine");
     rootNode.attachChild(shootables);
     
     makeGumballMachine();
     makeCoins();
     
-    /** Initialize the scene, materials, and physics space */
+    /** Initialize the scene, materials, audio and physics space */
     initMaterials();
     initFloor();
     initCrossHairs();
@@ -133,8 +135,9 @@ public class Main extends SimpleApplication {
     initWall();
   }
   
+  
   public void makeBrick(Vector3f loc) {
-    /** Create a brick geometry and attach to scene graph. */
+    /** Create a brick geometry and attach to scene graph for x-axis. */
     Geometry brick_geo = new Geometry("brick", box);
     brick_geo.setMaterial(stone_mat);
     rootNode.attachChild(brick_geo);
@@ -148,7 +151,7 @@ public class Main extends SimpleApplication {
   }
   
   public void makeBrickSide(Vector3f loc) {
-    /** Create a brick geometry and attach to scene graph. */
+    /** Create a brick geometry and attach to scene graph for z-axis. */
     Geometry brick_geo = new Geometry("brick", box2);
     brick_geo.setMaterial(stone_mat);
     rootNode.attachChild(brick_geo);
@@ -412,7 +415,7 @@ public class Main extends SimpleApplication {
         j+=1;
     }*/
    
-    // You must add a light to make the model visible
+    // Add a light to make the model visible
     DirectionalLight sun = new DirectionalLight();
     sun.setDirection(new Vector3f(-0.1f, -0.7f, -1.0f));
     shootables.addLight(sun);
@@ -671,7 +674,6 @@ public class Main extends SimpleApplication {
                         ball_rel.playInstance();
                         gumballMachine.getControl(gumballMachine.class).resetAmtInSlot();
                     }
-                    
                 }
                 else if ("Quarter".equals(p.getName()) || "Dime".equals(p.getName())
                         || "Nickel".equals(p.getName()) || "Penny".equals(p.getName()) ) {

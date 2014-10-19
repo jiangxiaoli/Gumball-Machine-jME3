@@ -13,28 +13,15 @@ public class SoldOutState extends AbstractControl implements State {
     
     public void acceptCoin(int value) {
         System.out.println("The machine is sold out!");
-        System.out.println("Returning your " + value + " cents");
+        System.out.println("Sorry, cannot return your " + value + " cents");
+        //System.out.println("Returning your " + value + " cents");
         gMach.resetAmtInSlot();
     }
     
     public void turnCrank() {
-        System.out.println("Crank turned but the machine is sold out!");
+        System.out.println("The machine is sold out! Refill it first.");
     }
     
-    
-    /*private void dispense() {
-        
-    }*/
-    
-    /*public int getAmtInSlot() {
-        //System.out.println(gMach.getPayment());
-        return gMach.getPayment();
-    }
-    
-    public void resetAmtInSlot() {
-        spatial.setUserData("payment", 0);
-        dispense = false;
-    }*/
     
     @Override
     protected void controlUpdate(float tpf) {

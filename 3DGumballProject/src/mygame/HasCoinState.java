@@ -25,21 +25,6 @@ public class HasCoinState extends AbstractControl implements State {
         System.out.println("You still need to put in " + remain + " cents");
     }
    
-    
-    /*private void dispense() {
-        
-    }*/
-    
-    /*public int getAmtInSlot() {
-        //System.out.println(gMach.getPayment());
-        return gMach.getPayment();
-    }
-    
-    public void resetAmtInSlot() {
-        spatial.setUserData("payment", 0);
-        dispense = false;
-    }*/
-    
     @Override
     protected void controlUpdate(float tpf) {
         if (spatial != null) {
