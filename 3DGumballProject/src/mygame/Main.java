@@ -264,7 +264,10 @@ public class Main extends SimpleApplication {
     //gM = makeCube("Gumball Machine", 0, 4f, 1f);    
     gumballMachine.addControl((Control) new gumballMachine());
     gumballMachine.getControl(gumballMachine.class).setCount(5);
-    //gumballMachine.getControl(gumballMachine.class).resetAmtInSlot();
+    gumballMachine.getControl(gumballMachine.class).resetAmtInSlot();
+    int gBallPrice = 25;
+    gumballMachine.getControl(gumballMachine.class).setGBallPrice(25);
+    System.out.println("Gumball price is: "+ gBallPrice+ " cents");
     
   }
   
@@ -653,6 +656,7 @@ public class Main extends SimpleApplication {
                 //System.out.println("You hit " + s.getName());
                 if ("Gumball Machine".equals(s.getName())){
                     System.out.println(gumballMachine.getControl(gumballMachine.class).getState());
+                    gumballMachine.getControl(gumballMachine.class).turnCrank();
                     mach_crank.playInstance();
                     //to delay release of gumball until after audio finishes
                     try {
@@ -661,25 +665,25 @@ public class Main extends SimpleApplication {
                         Thread.currentThread().interrupt();
                     }
                     
-                    /*if (gumballMachine.getControl(gumballMachine.class).makeGumball()){
+                    if (gumballMachine.getControl(gumballMachine.class).makeGumball()){
                         g_color = randInt(1,5);
                         makeGumballs(g_color);//random # btwn 1-5 for color
                         ball_rel.playInstance();
                         gumballMachine.getControl(gumballMachine.class).resetAmtInSlot();
-                    }*/
+                    }
                     
                 }
                 else if ("Quarter".equals(p.getName()) || "Dime".equals(p.getName())
                         || "Nickel".equals(p.getName()) || "Penny".equals(p.getName()) ) {
                     System.out.println(p.getName() + " inserted.");
-                    //System.out.print(s.getUserData("value"));
+                    //System.out.print(p.getUserData("value"));
                     //System.out.println(" cent(s)");
-                    //gumballMachine.getControl(gumballMachine.class).acceptCoin((Integer)p.getUserData("value"));
+                    gumballMachine.getControl(gumballMachine.class).acceptCoin((Integer)p.getUserData("value"));
                     //remove coin from scene
                     shootables.detachChild(p);
                     coin_slot.playInstance();
                     System.out.print("Machine has: ");
-                    System.out.print(gumballMachine.getControl(gumballMachine.class).getAmtInSlot());
+                    System.out.print(gumballMachine.getControl(gumballMachine.class).getPayment());
                     System.out.println(" cent(s)");
                 }
                 else if ("gumball".equals(results.getCollision(0).getGeometry().getName())){
@@ -701,7 +705,7 @@ public class Main extends SimpleApplication {
             
           }//for "Crank"
           else if (name.equals("Refill") && !keyPressed) {
-              //gumballMachine.getControl(gumballMachine.class).refill(5);
+              gumballMachine.getControl(gumballMachine.class).refill(5);
               //default refill by 5 gumballs
           }//for "Refill"
           else if (name.equals("Shoot") && !keyPressed) {
