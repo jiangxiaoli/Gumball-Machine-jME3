@@ -82,7 +82,7 @@ public class gumballMachine extends AbstractControl{
         return HasGPriceState;
     }
     
-    public State SoldOutState() {
+    public State getSoldOutState() {
         return SoldOutState;
     }
     
