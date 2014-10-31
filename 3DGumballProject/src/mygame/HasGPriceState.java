@@ -33,7 +33,7 @@ public class HasGPriceState extends AbstractControl implements State {
             gMach.setState(gMach.getNoCoinState());
         }
         else {
-            gMach.setState(gMach.SoldOutState());
+            gMach.setState(gMach.getSoldOutState());
         }
         
     }
