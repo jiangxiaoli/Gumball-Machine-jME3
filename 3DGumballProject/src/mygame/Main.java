@@ -35,15 +35,15 @@ public class Main extends SimpleApplication {
     Main app = new Main();
     app.start();
     
-    /** Disable the default scene graph statistics */
+    // Disable the default scene graph statistics
     app.setDisplayStatView(false); 
     app.setDisplayFps(false);
   }
  
-  /** Prepare the Physics Application State (jBullet) */
+  // Prepare the Physics Application State (jBullet)
   private BulletAppState bulletAppState;
  
-  /** Prepare Materials */
+  // Prepare Materials
   Material wall_mat;
   Material stone_mat;
   Material floor_mat;
@@ -51,7 +51,7 @@ public class Main extends SimpleApplication {
   private Node gumballMachine; //node for gumball machine parts
   private Geometry gBall, cBall; //for gumballmachine and gumballs
   
-  /** Prepare geometries and physical nodes for gumballs, floor and cube. */
+  /// Prepare geometries and physical nodes for gumballs, floor and cube.
   private RigidBodyControl    ball_phy;
   private static final Sphere sphere;
   private RigidBodyControl    floor_phy;
@@ -63,7 +63,7 @@ public class Main extends SimpleApplication {
   private static final Box    box;
   private static final Box    box2;
  
-  /** dimensions used for bricks and wall */
+  /// dimensions used for bricks and wall
   private static final float brickLength = 5f;
   private static final float brickWidth  = 1f;
   private static final float brickHeight = 2f;
@@ -83,31 +83,31 @@ public class Main extends SimpleApplication {
   private ColorRGBA Pink = new ColorRGBA(1,0.68f,0.68f,1);//pink
   private ColorRGBA White =  new ColorRGBA(1,1,1,1);//white
   
+  //for cannonball, brick and floor
   static {
-    /** Initialize the cannon ball geometry */
     sphere = new Sphere(32, 32, 0.4f, true, false);
     sphere.setTextureMode(TextureMode.Projected);
-    /** Initialize the brick geometry */
+    
     box = new Box(brickLength, brickHeight, brickWidth);
     box.scaleTextureCoordinates(new Vector2f(1f, .5f));
     box2 = new Box(brickWidth, brickHeight, brickLength);
     box2.scaleTextureCoordinates(new Vector2f(1f, .5f));
-    /** Initialize the floor geometry */
+    
     floor = new Box(60f, 0.1f, 40f);
     floor.scaleTextureCoordinates(new Vector2f(3, 6));
   }
- 
+  
   @Override
   public void simpleInitApp() {
     //make background world blue color
     ColorRGBA background_blue = new ColorRGBA(.1f,.5f,1,1);
     viewPort.setBackgroundColor(background_blue);
     
-    /** Set up Physics Game */
+    // Set up Physics Game
     bulletAppState = new BulletAppState();
     stateManager.attach(bulletAppState);
  
-    /** Configure cam to look at scene */
+    // Configure cam to look at scene
     cam.setLocation(new Vector3f(0, 6f, 18f));
     cam.lookAt(new Vector3f(0, 4f, 0), Vector3f.UNIT_Y);
     flyCam.setMoveSpeed(10); //move camera faster
@@ -116,54 +116,58 @@ public class Main extends SimpleApplication {
     rootNode.attachChild(SkyFactory.createSky(
             assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
     
-    //node for all gumballmachine world objects
+    //create node for all gumballmachine world objects
     shootables = new Node("Shootables");
+    rootNode.attachChild(shootables); //attach all world obj to root note
     
-    //node for gumball machine
+    //create node for gumball machine (has 3 parts)
     gumballMachine = new Node("GumballMachine");
-    rootNode.attachChild(shootables);
     
-    makeGumballMachine();
+    //run all initialize functions
+    initializeWorld();
+    
+    //for gumball machine - get input from user?
+    int gBallPrice = 25;
+    int initialGBall = 5;
+    
+    makeGumballMachine(initialGBall, gBallPrice);
     makeCoins();
-    
-    /** Initialize the scene, materials, audio and physics space */
-    initMaterials();
-    initFloor();
-    initCrossHairs();
-    initKeys();
-    initAudio();
-    initWall();
   }
   
+  public void initializeWorld() {
+      /** Initialize the scene, materials, audio and physics space */
+      initMaterials();
+      initFloor();
+      initCrossHairs();
+      initKeys();
+      initAudio();
+      initWall();
+  }
   
   public void makeBrick(Vector3f loc) {
-    /** Create a brick geometry and attach to scene graph for x-axis. */
     Geometry brick_geo = new Geometry("brick", box);
     brick_geo.setMaterial(stone_mat);
     rootNode.attachChild(brick_geo);
-    /** Position the brick geometry  */
     brick_geo.setLocalTranslation(loc);
-    /** Make brick physical with a mass > 0.0f. */
+    
+    // Make brick physical with a mass > 0.0f. */
     brick_phy = new RigidBodyControl(0.0f);
-    /** Add physical brick to physics space. */
     brick_geo.addControl(brick_phy);
     bulletAppState.getPhysicsSpace().add(brick_phy);
   }
   
   public void makeBrickSide(Vector3f loc) {
-    /** Create a brick geometry and attach to scene graph for z-axis. */
+    // Create a brick geometry and attach to scene graph for z-axis
     Geometry brick_geo = new Geometry("brick", box2);
     brick_geo.setMaterial(stone_mat);
     rootNode.attachChild(brick_geo);
-    /** Position the brick geometry  */
     brick_geo.setLocalTranslation(loc);
-    /** Make brick physical with a mass > 0.0f. */
+    
+    // Make brick physical with a mass > 0.0f. */
     brick_phy = new RigidBodyControl(0.0f);
-    /** Add physical brick to physics space. */
     brick_geo.addControl(brick_phy);
     bulletAppState.getPhysicsSpace().add(brick_phy);
   }
-  
   
    protected Geometry makeSphere(String name, float x, float y, float z) {
     Sphere sphere_ball = new Sphere(40, 150, 0.8f, true, false);
@@ -174,10 +178,7 @@ public class Main extends SimpleApplication {
     balloon.setMaterial(mat1);
     balloon.setLocalTranslation(x,y,z);
     
-    /** Make the ball physcial with a mass > 0.0f */
     ball_phy = new RigidBodyControl(1f);
-    
-    /** Add physical ball to physics space. */
     balloon.addControl(ball_phy);
     bulletAppState.getPhysicsSpace().add(ball_phy);
     return balloon;
@@ -191,20 +192,16 @@ public class Main extends SimpleApplication {
     mat1.setColor("Color", color);
     gumball.setMaterial(mat1);
     gumball.setLocalTranslation(loc);
-    gumball.scale(0.7f);
+    gumball.scale(0.7f); //scale to make it smaller
     
-    /** Make the ball physcial with a mass > 0.0f */
     ball_phy = new RigidBodyControl(0.5f);
-    
-    /** Add physical ball to physics space. */
     gumball.addControl(ball_phy);
     bulletAppState.getPhysicsSpace().add(ball_phy);
-    
     return gumball;
-  
   }
   
   protected Geometry makeGumball(String name, float x, float y, float z, ColorRGBA color) {
+    //overloads previous method
     Sphere sphere_ball = new Sphere(35, 35, 0.8f, true, false);
     sphere_ball.setTextureMode(TextureMode.Projected);
     Geometry gumball = new Geometry(name, sphere_ball);
@@ -214,19 +211,15 @@ public class Main extends SimpleApplication {
     gumball.setLocalTranslation(x,y,z);
     gumball.scale(0.7f);
     
-    /** Make the ball physcial with a mass > 0.0f */
     ball_phy = new RigidBodyControl(0.5f);
-    
-    /** Add physical ball to physics space. */
     gumball.addControl(ball_phy);
     bulletAppState.getPhysicsSpace().add(ball_phy);
     
     return gumball;
-  
   }
   
-   /** A cube object for target practice */
-  protected Geometry makeCube(String name, float x, float y, float z) {
+  /*protected Geometry makeCube(String name, float x, float y, float z) {
+    // A cube object for target practice
     Box box = new Box(1, 4, 2);
     Geometry cube = new Geometry(name, box);
     cube.setLocalTranslation(x, y, z);
@@ -239,9 +232,9 @@ public class Main extends SimpleApplication {
     bulletAppState.getPhysicsSpace().add(cube_phy);
     
     return cube;
-  }
+  }*/
   
-  protected void makeGumballMachine() {
+  protected void makeGumballMachine(int initialGBall, int gBallPrice) {
     //make gumball machine
     Spatial gM_bot = assetManager.loadModel("Models/GM_buttom/GM_buttom.mesh.xml");
     gM_bot.setLocalTranslation(0, 7f, 1f);
@@ -257,21 +250,20 @@ public class Main extends SimpleApplication {
     gM_top.setLocalTranslation(0, 7f, 1f);
     gM_top.scale(3f,3f,3f);
     gumballMachine.attachChild(gM_top);
+    
     gumballMachine.setName("Gumball Machine");
     gumballm_phy = new RigidBodyControl(0.0f);
     gumballMachine.addControl(gumballm_phy);
     bulletAppState.getPhysicsSpace().add(gumballm_phy);
     
+    //attach gumballMachine to shootables node, which is attached to rootNode
     shootables.attachChild(gumballMachine);
     
-    //gM = makeCube("Gumball Machine", 0, 4f, 1f);    
     gumballMachine.addControl((Control) new gumballMachine());
-    gumballMachine.getControl(gumballMachine.class).setCount(5);
+    gumballMachine.getControl(gumballMachine.class).setCount(initialGBall);
     gumballMachine.getControl(gumballMachine.class).resetAmtInSlot();
-    int gBallPrice = 25;
-    gumballMachine.getControl(gumballMachine.class).setGBallPrice(25);
+    gumballMachine.getControl(gumballMachine.class).setGBallPrice(gBallPrice);
     System.out.println("Gumball price is: "+ gBallPrice+ " cents");
-    
   }
   
   //make all coins
@@ -281,7 +273,6 @@ public class Main extends SimpleApplication {
     float j = 0.1f;
     float k = j;
     for (int i = 0; i < 10; i++) {
-        
         Spatial Quarter = assetManager.loadModel("Models/SilverCoin/SilverCoin.mesh.xml");
         Quarter.setName("Quarter");
         Quarter.scale(1f, 1f, 1f);
@@ -504,7 +495,7 @@ public class Main extends SimpleApplication {
     cBall.addControl(ball_phy);
     bulletAppState.getPhysicsSpace().add(ball_phy);
     /** Accelerate the physcial ball to shoot it. */
-    ball_phy.setLinearVelocity(cam.getDirection().mult(25));
+    ball_phy.setLinearVelocity(cam.getDirection().mult(40));
     shootables.attachChild(cBall);
     
   }
@@ -641,13 +632,11 @@ public class Main extends SimpleApplication {
   private ActionListener actionListener = new ActionListener() {
       int g_color;
       boolean taken_gball = false;
+      int gBalls = 0;
       public void onAction(String name, boolean keyPressed, float tpf) {
           if (name.equals("Click") && !keyPressed) {
-            // 1. Reset results list.
             CollisionResults results = new CollisionResults();
-            // 2. Aim the ray from cam loc to cam direction.
             Ray ray = new Ray(cam.getLocation(), cam.getDirection());
-            // 3. Collect intersections between Ray and Shootables in results list.
             shootables.collideWith(ray, results);
             
             if (results.size() > 0) {//not missed
@@ -702,32 +691,46 @@ public class Main extends SimpleApplication {
                     System.out.print(results.getCollision(0).getGeometry().getUserData("color"));
                     System.out.println(" gumball!");
                     taken_gball = true;
+                    gBalls++;
+                    System.out.println("You have " + gBalls + " gumball(s)!");
                 }
-            }
-            
-          }//for "Crank"
+                else if ("cannonball".equals(results.getCollision(0).getGeometry().getName())){
+                    System.out.println("Retrieving the gumball!");
+                    gBalls++;
+                    //taken_gball = true;
+                    //g_color = results.getCollision(0).getGeometry().getUserData("color");
+                    System.out.println("You have " + gBalls + " gumball(s) now!");
+                    //remove cannonball from scene
+                    bulletAppState.getPhysicsSpace().remove(ball_phy);
+                    results.getCollision(0).getGeometry().removeFromParent();
+                    shootables.detachChild(results.getCollision(0).getGeometry());
+                }
+            }//end hit
+          }//end Click
           else if (name.equals("Refill") && !keyPressed) {
               gumballMachine.getControl(gumballMachine.class).refill(5);
               //default refill by 5 gumballs
-          }//for "Refill"
+          }//end Refill
           else if (name.equals("Shoot") && !keyPressed) {
               if (taken_gball) {
                   makeCannonBall(g_color);
                   ball_whoosh.playInstance();
                   g_color = 0;
+                  gBalls--;
+                  System.out.println("You have " + gBalls + " gumball(s) left!");
                   taken_gball = false;
               }
               else {
                   System.out.println("No cannonball. You must get a gumball first");
               }
               
-          }//for "Shoot"
+          }//end Shoot
           
           
           
-       }
+       }//end onAction
   };//end ActionListener
   
 
   
-}
+}//end Main class
