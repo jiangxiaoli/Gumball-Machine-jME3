@@ -29,6 +29,7 @@ import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
 import com.jme3.util.SkyFactory;
 import java.util.Random;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
 
 public class Main extends SimpleApplication { 
   public static void main(String args[]) {
@@ -142,6 +143,7 @@ public class Main extends SimpleApplication {
       initKeys();
       initAudio();
       initWall();
+      initWelcome();
   }
   
   public void makeBrick(Vector3f loc) {
@@ -628,6 +630,18 @@ public class Main extends SimpleApplication {
     inputManager.addListener(actionListener, "Refill");
   }
   
+  /** Display a Greeting Title on top of the game screen*/
+  protected void initWelcome() {
+    guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
+    BitmapText hudText = new BitmapText(guiFont, false);
+    hudText.setSize(guiFont.getCharSet().getRenderedSize()); // font size
+    hudText.setColor(ColorRGBA.Orange);  // font color
+    hudText.setText("Welcome To Team 6 Gumball World ^_^ \n"); // the text
+    hudText.setLocalTranslation(50, 575, 0); // position
+    guiNode.attachChild(hudText);
+    guiNode.setQueueBucket(Bucket.Gui);
+    
+  }
   
   private ActionListener actionListener = new ActionListener() {
       int g_color;
