@@ -51,6 +51,8 @@ public class Main extends SimpleApplication {
   private Node shootables; //node for all objects
   private Node gumballMachine; //node for gumball machine parts
   private Geometry gBall, cBall; //for gumballmachine and gumballs
+  private BitmapText userInfo; // for showing user's information
+  private BitmapText sysStatusInfo; // for showing the system status
   
   /// Prepare geometries and physical nodes for gumballs, floor and cube.
   private RigidBodyControl    ball_phy;
@@ -135,6 +137,17 @@ public class Main extends SimpleApplication {
     makeCoins();
   }
   
+  // for showing the data of the game
+  @Override
+  public void simpleUpdate(float tpf) {
+    //score = score + 1;
+    //String user_data = "Score: " + score + "\n" + "Cost: " + cost+ "\n";
+    String user_data = "Score: \n" + "Gumball Amt: \n" + "Coin Remained: \n";
+    userInfo.setText(user_data);
+    //sysStatusInfo.setText("======Your Status=====\n"+ status);
+    sysStatusInfo.setText("Status:\n");
+  }
+  
   public void initializeWorld() {
       /** Initialize the scene, materials, audio and physics space */
       initMaterials();
@@ -144,6 +157,8 @@ public class Main extends SimpleApplication {
       initAudio();
       initWall();
       initWelcome();
+      userInfo = initPlayerInfo();
+      sysStatusInfo = initSysStas();
   }
   
   public void makeBrick(Vector3f loc) {
@@ -640,6 +655,31 @@ public class Main extends SimpleApplication {
     hudText.setLocalTranslation(50, 575, 0); // position
     guiNode.attachChild(hudText);
     guiNode.setQueueBucket(Bucket.Gui);
+    
+  }
+  
+  /*Display the game status*/
+  protected BitmapText initSysStas() {
+    guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
+    BitmapText hudText = new BitmapText(guiFont, false);
+    hudText.setSize(guiFont.getCharSet().getRenderedSize()); // font size
+    hudText.setColor(ColorRGBA.Yellow);  // font colo
+    hudText.setLocalTranslation(10, 40, 0); // position
+    guiNode.attachChild(hudText);
+    guiNode.setQueueBucket(Bucket.Gui);
+    return hudText;
+  }
+  
+  /*Display the player's information*/
+  protected BitmapText initPlayerInfo(){
+    guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
+    BitmapText hudText = new BitmapText(guiFont, false);
+    hudText.setSize(guiFont.getCharSet().getRenderedSize()); // font size
+    hudText.setColor(ColorRGBA.Yellow);  // font colo
+    hudText.setLocalTranslation(600, 575, 0); // position
+    guiNode.attachChild(hudText);
+    guiNode.setQueueBucket(Bucket.Gui);
+    return hudText;
     
   }
   
