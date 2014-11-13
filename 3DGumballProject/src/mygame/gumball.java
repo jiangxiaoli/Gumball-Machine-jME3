@@ -9,9 +9,15 @@ import com.jme3.scene.control.AbstractControl;
  * through the gumballMachine game logic.
  */
 
-public class gumball extends AbstractControl{
+public class gumball extends AbstractControl implements Component{
+    
+    private long tStart;
     public gumball() {
-        
+        tStart = System.currentTimeMillis();
+    }
+    
+    public long getElapse() {
+         return System.currentTimeMillis() - tStart  ; 
     }
     
     public void setColor(String color) {
@@ -43,4 +49,14 @@ public class gumball extends AbstractControl{
     protected void controlRender(RenderManager rm, ViewPort vp) {
        //controlRender code here
     }
+    
+    
+    public void addChild(Component c) {}
+
+    public void removeChild(Component c) {}
+
+    public Component getTheChild(int i) {
+        return null;
+    }
+    
 }
