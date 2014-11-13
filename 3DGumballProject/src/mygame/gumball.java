@@ -9,18 +9,14 @@ import com.jme3.scene.control.AbstractControl;
  * through the gumballMachine game logic.
  */
 
-public class gumball extends AbstractControl{
-    
-    private long tStart;
+public class gumball extends AbstractControl {
+
     public gumball() {
-        tStart = System.currentTimeMillis();
-    }
-    
-    public long getElapse() {
-         return System.currentTimeMillis() - tStart  ; 
     }
     
     public void setColor(String color) {
+        System.out.print("in gumball");
+        System.out.print(spatial);
         spatial.setUserData("color", color);
     }
     
@@ -36,6 +32,7 @@ public class gumball extends AbstractControl{
         return (Integer)spatial.getUserData("value");
     }
 
+    
     @Override
     protected void controlUpdate(float tpf) {
         if (spatial != null) {
@@ -49,6 +46,5 @@ public class gumball extends AbstractControl{
     protected void controlRender(RenderManager rm, ViewPort vp) {
        //controlRender code here
     }
-    
     
 }
