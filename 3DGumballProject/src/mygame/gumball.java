@@ -9,7 +9,7 @@ import com.jme3.scene.control.AbstractControl;
  * through the gumballMachine game logic.
  */
 
-public class gumball extends AbstractControl implements Component{
+public class gumball extends AbstractControl{
     
     private long tStart;
     public gumball() {
@@ -50,13 +50,5 @@ public class gumball extends AbstractControl implements Component{
        //controlRender code here
     }
     
-    
-    public void addChild(Component c) {}
-
-    public void removeChild(Component c) {}
-
-    public Component getTheChild(int i) {
-        return null;
-    }
     
 }

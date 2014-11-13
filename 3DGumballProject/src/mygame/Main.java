@@ -52,12 +52,10 @@ public class Main extends SimpleApplication {
   Material floor_mat;
   private Node shootables; //node for all objects
   private Node gumballMachine; //node for gumball machine parts
-  private Geometry gBall, cBall, egBall; //for gumballmachine and gumballs
+  private Geometry gBall, cBall; //for gumballmachine and gumballs
   private BitmapText userInfo; // for showing user's information
   private BitmapText sysStatusInfo; // for showing the system status
   
-  //composite - gumballSet
-  private GumballSet gumballSet;
   
   /// Prepare geometries and physical nodes for gumballs, floor and cube.
   private RigidBodyControl    ball_phy;
@@ -126,7 +124,6 @@ public class Main extends SimpleApplication {
     
     //create node for all gumballmachine world objects
     shootables = new Node("Shootables");
-    //shootables.attachChild(gumballSet);
     rootNode.attachChild(shootables); //attach all world obj to root note
     
     
