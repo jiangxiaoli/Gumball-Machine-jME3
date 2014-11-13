@@ -30,6 +30,8 @@ import com.jme3.texture.Texture.WrapMode;
 import com.jme3.util.SkyFactory;
 import java.util.Random;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main extends SimpleApplication { 
   public static void main(String args[]) {
@@ -53,6 +55,7 @@ public class Main extends SimpleApplication {
   private Geometry gBall, cBall; //for gumballmachine and gumballs
   private BitmapText userInfo; // for showing user's information
   private BitmapText sysStatusInfo; // for showing the system status
+  
   
   /// Prepare geometries and physical nodes for gumballs, floor and cube.
   private RigidBodyControl    ball_phy;
@@ -123,6 +126,7 @@ public class Main extends SimpleApplication {
     shootables = new Node("Shootables");
     rootNode.attachChild(shootables); //attach all world obj to root note
     
+    
     //create node for gumball machine (has 3 parts)
     gumballMachine = new Node("GumballMachine");
     
@@ -146,6 +150,34 @@ public class Main extends SimpleApplication {
     userInfo.setText(user_data);
     //sysStatusInfo.setText("======Your Status=====\n"+ status);
     sysStatusInfo.setText("Status:\n");
+    
+    
+    //update gumball elapse time, check each gumball, if > 20s ,detach
+    //test shootables.getChildren()
+    List<Spatial> sChilren = shootables.getChildren();
+    //for gumball collections
+    List<Spatial> gumballs = new ArrayList<Spatial>();
+    for(Spatial s : sChilren){
+        //System.out.println(s.getName());
+        if(s.getName().equals("gumball")){
+            gumballs.add(s);
+        }
+    }
+    
+    for(Spatial s : gumballs){
+        s.addControl((Control) new gumball());
+        int val = s.getControl(gumball.class).getValue();
+        long time = s.getControl(gumball.class).getElapse();
+        System.out.println("gumball value: " + val + ", elapsed time:" +time );
+        
+        //gumball disapper with time
+        if(time>20000){
+            shootables.detachChild(s);
+            //maybe add blink effects
+        }
+    }
+    
+    
   }
   
   public void initializeWorld() {
@@ -439,7 +471,7 @@ public class Main extends SimpleApplication {
               gBall.addControl((Control) new gumball());
               gBall.getControl(gumball.class).setColor("red");
               gBall.getControl(gumball.class).setValue(5);
-              shootables.attachChild(gBall);
+              //shootables.attachChild(gBall);
               break;
           case 2:
               //ColorRGBA Green = new ColorRGBA(0,1,0,1);//green
@@ -447,7 +479,7 @@ public class Main extends SimpleApplication {
               gBall.addControl((Control) new gumball());
               gBall.getControl(gumball.class).setColor("green");
               gBall.getControl(gumball.class).setValue(15);
-              shootables.attachChild(gBall);
+              //shootables.attachChild(gBall);
               break;
           case 3:
               //ColorRGBA Blue = new ColorRGBA(0,0,1,1);//blue
@@ -455,7 +487,7 @@ public class Main extends SimpleApplication {
               gBall.addControl((Control) new gumball());
               gBall.getControl(gumball.class).setColor("blue");
               gBall.getControl(gumball.class).setValue(50);
-              shootables.attachChild(gBall);
+              //shootables.attachChild(gBall);
               break;
           case 4:
               //ColorRGBA Yellow = new ColorRGBA(1,1,0,1);//yellow
@@ -463,7 +495,7 @@ public class Main extends SimpleApplication {
               gBall.addControl((Control) new gumball());
               gBall.getControl(gumball.class).setColor("yellow");
               gBall.getControl(gumball.class).setValue(35);
-              shootables.attachChild(gBall);
+              //shootables.attachChild(gBall);
               break;
           case 5:
               //ColorRGBA Pink = new ColorRGBA(1,0.68f,0.68f,1);//pink
@@ -471,9 +503,15 @@ public class Main extends SimpleApplication {
               gBall.addControl((Control) new gumball());
               gBall.getControl(gumball.class).setColor("pink");
               gBall.getControl(gumball.class).setValue(100);
-              shootables.attachChild(gBall);
+              //shootables.attachChild(gBall);
               break;
       }
+      
+      //apply decorator
+      //egBall = new ElapseGumball(gBall);
+      shootables.attachChild(gBall);
+      //add leaf to composite
+      //gumballSet.addChild(egBall);
       
   }
   

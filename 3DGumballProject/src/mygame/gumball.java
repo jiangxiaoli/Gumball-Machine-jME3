@@ -10,8 +10,14 @@ import com.jme3.scene.control.AbstractControl;
  */
 
 public class gumball extends AbstractControl{
+    
+    private long tStart;
     public gumball() {
-        
+        tStart = System.currentTimeMillis();
+    }
+    
+    public long getElapse() {
+         return System.currentTimeMillis() - tStart  ; 
     }
     
     public void setColor(String color) {
@@ -43,4 +49,6 @@ public class gumball extends AbstractControl{
     protected void controlRender(RenderManager rm, ViewPort vp) {
        //controlRender code here
     }
+    
+    
 }
