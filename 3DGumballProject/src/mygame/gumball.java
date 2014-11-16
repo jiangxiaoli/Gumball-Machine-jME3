@@ -10,8 +10,16 @@ import com.jme3.scene.control.AbstractControl;
  */
 
 public class gumball extends AbstractControl {
+    private gumballState state; //state of gumball
+    private gumballState DispensedState;
+    private gumballState InPocketState;
+    private gumballState FiredState;
 
     public gumball() {
+        DispensedState = new DispensedState(this);
+        InPocketState = new InPocketState(this);
+        FiredState = new FiredState(this);
+        state = DispensedState;
     }
     
     public void setColor(String color) {
@@ -31,14 +39,42 @@ public class gumball extends AbstractControl {
     public int getValue() {
         return (Integer)spatial.getUserData("value");
     }
+    
+    
+    /*For States*/
+    public gumballState getState() {
+        return state;
+    }
+   
+    public gumballState getDispensedState() {
+        return DispensedState;
+    }
+    
+    public gumballState getFiredState() {
+        return FiredState;
+    }
+    
+    public gumballState getInPocketState() {
+        return InPocketState;
+    }
+    
+    public void setState(gumballState newState) {
+        state = newState;
+    }
+    
+    public void setFiredState() {
+        state = FiredState;
+    }
+    
+    
+    /*For State Functions*/
+    public String catchIt() {
+        return state.catchIt();
+    }
 
     
     @Override
     protected void controlUpdate(float tpf) {
-        if (spatial != null) {
-            //System.out.println("Do something here");
-           
-        }
         
     }
 
