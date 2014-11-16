@@ -23,8 +23,9 @@ public class NoCoinState extends AbstractControl implements State {
         }
     }
     
-    public void turnCrank() {
+    public String turnCrank() {
         System.out.println("You need to insert money first!");
+        return "You need to insert money first!";
     }
     
     @Override

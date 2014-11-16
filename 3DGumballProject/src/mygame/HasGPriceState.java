@@ -17,9 +17,10 @@ public class HasGPriceState extends AbstractControl implements State {
         gMach.setPayment(curr_amt);
     }
     
-    public void turnCrank() {
+    public String turnCrank() {
         System.out.println("Crank turned!");
         dispense();
+        return "Crank turned!";
     }
     
     private void dispense() {

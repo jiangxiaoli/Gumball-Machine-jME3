@@ -20,9 +20,10 @@ public class HasCoinState extends AbstractControl implements State {
         }
     }
     
-    public void turnCrank() {
+    public String turnCrank() {
         int remain = gMach.getGBallPrice() - gMach.getPayment();
         System.out.println("You still need to put in " + remain + " cents");
+        return "You still need to put in " + remain + " cents";
     }
    
     @Override

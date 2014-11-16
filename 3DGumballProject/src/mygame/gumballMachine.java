@@ -92,8 +92,8 @@ public class gumballMachine extends AbstractControl{
         state.acceptCoin(value);
     }
     
-    public void turnCrank() {
-        state.turnCrank();
+    public String turnCrank() {
+        return state.turnCrank();
     }
     
     /*Gumball Machine Functions*/

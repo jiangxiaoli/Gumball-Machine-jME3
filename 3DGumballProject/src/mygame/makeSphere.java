@@ -5,6 +5,7 @@
 package mygame;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -53,6 +54,8 @@ public class makeSphere implements Product{
         sphereMat.setFloat("Shininess", 64f);  // [0,128]
         sphereGeo.setMaterial(sphereMat);
         sphereGeo.setLocalTranslation(-18f,6.2f, -1); // Move it a bit
+        
+        
         sphereNode.attachChild(sphereGeo);
         node.attachChild(sphereNode);
         sphereGeo.setName("Rock Ball");
