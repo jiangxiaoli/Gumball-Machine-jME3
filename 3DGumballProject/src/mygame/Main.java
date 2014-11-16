@@ -143,6 +143,9 @@ public class Main extends SimpleApplication {
     
     makeGumballMachine(initialGBall, gBallPrice);
     makeCoins();
+    
+    //add wall and target object to shoot --------*/
+    addWallandTarget();
   }
   
   // for showing the data of the game
@@ -856,6 +859,31 @@ public class Main extends SimpleApplication {
                   //System.out.println("You have " + gBalls + " gumball(s) left!");
                   gameStatus = "You have " + gBalls + " gumball(s) left!";
                   System.out.println(gameStatus);
+                                                                    
+                  /*---------- Adding for gumball shoot the target-----------------*/
+                  CollisionResults shootResults = new CollisionResults();
+                  Ray shootRay = new Ray(cam.getLocation(), cam.getDirection());
+                  shootables.collideWith(shootRay, shootResults);
+                  if(shootResults.size()>1)
+                  {
+                      int origScore = userData.getState().get("score");
+                      if ("Teapot".equals(shootResults.getCollision(1).getGeometry().getName())){
+                           //Teapot score +100                          
+                           userData.setState("score", origScore + 100);
+                           gameStatus = "You shot at Teapot, and you got Score 100 ";
+                           System.out.println(gameStatus);
+                      }else if("Rock Ball".equals(shootResults.getCollision(1).getGeometry().getName())){
+                            //Teapot score +200
+                           userData.setState("score", origScore + 200);
+                           gameStatus = "You shot at Rock Ball, and you got Score 200 ";
+                           System.out.println(gameStatus);
+                      }else if("Elephant-geom-1".equals(shootResults.getCollision(1).getGeometry().getName())){
+                           userData.setState("score", origScore + 150); 
+                           gameStatus = "You shot at Elephant, and you got Score 150 ";
+                           System.out.println(gameStatus);
+                      }
+                  }
+                                    
                   taken_gball = false;
               }
               else {
@@ -871,6 +899,39 @@ public class Main extends SimpleApplication {
        }//end onAction
   };//end ActionListener
   
+  /******* add the wall and target for shooting **********/
+  protected void addWallandTarget() {
 
+      //For Factory Method Pattern 
+      ConcreteCreator concreteCreator = new ConcreteCreator(assetManager,shootables);
+
+      //get an object of Teapot and call its makeProduct method.
+      Product teapot = concreteCreator.getProduct("TEAPOT");
+      //call makeProduct method of Teapot
+      teapot.makeProduct();
+
+      //get an object of Sphere and call its makeProduct method.
+      Product sphere = concreteCreator.getProduct("SPHERE");
+      //call makeProduct method of Sphere
+      sphere.makeProduct();
+      
+      //get an object of Elephant and call its makeProduct method.
+      Product elephant = concreteCreator.getProduct("ELEPHANT");
+      //call makeProduct method of Elephant
+      elephant.makeProduct();
+
+      // Create a wall with a simple texture from test_data
+        Box box = new Box(0.8f,5f,8f);
+        Spatial wall = new Geometry("Box", box );
+        Material mat_brick = new Material( 
+            assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        mat_brick.setTexture("ColorMap", 
+            assetManager.loadTexture("Textures/Terrain/BrickWall/BrickWall_normal.jpg"));
+        mat_brick.setColor("Color", ColorRGBA.LightGray);
+        wall.setMaterial(mat_brick);
+        wall.setLocalTranslation(-18f,0f,4f);
+        shootables.attachChild(wall);      
+  }
+  
   
 }//end Main class
