@@ -242,6 +242,7 @@ public class Main extends SimpleApplication {
   }
    
   protected Geometry makeGumball(String name, Vector3f loc, ColorRGBA color) {
+    /*for cannonballs*/
     Sphere sphere_ball = new Sphere(35, 35, 0.8f, true, false);
     sphere_ball.setTextureMode(TextureMode.Projected);
     Geometry gumball = new Geometry(name, sphere_ball);
@@ -253,6 +254,7 @@ public class Main extends SimpleApplication {
     
     ball_phy = new RigidBodyControl(0.5f);
     gumball.addControl(ball_phy);
+    //ball_phy.setLinearVelocity(cam.getDirection().mult(40));
     bulletAppState.getPhysicsSpace().add(ball_phy);
     return gumball;
   }
@@ -268,9 +270,20 @@ public class Main extends SimpleApplication {
     gumball.setLocalTranslation(x,y,z);
     gumball.scale(0.7f);
     
-    ball_phy = new RigidBodyControl(0.5f);
+    ball_phy = new RigidBodyControl(1f);
     gumball.addControl(ball_phy);
     bulletAppState.getPhysicsSpace().add(ball_phy);
+    
+    
+    //Vector3f dir = new Vector3f(0,-2,0);
+    //System.out.println(cam.getDirection());
+    int g_speed = randInt(40,60);
+    ball_phy.setLinearVelocity(cam.getDirection().mult(g_speed));
+    //shootables.attachChild(cBall);
+    
+    //
+    //ball_phy.setLinearVelocity(cam.getLocation().mult(g_speed));
+    
     
     return gumball;
   }
@@ -563,6 +576,8 @@ public class Main extends SimpleApplication {
     cBall.addControl(ball_phy);
     bulletAppState.getPhysicsSpace().add(ball_phy);
     /** Accelerate the physcial ball to shoot it. */
+    
+    
     ball_phy.setLinearVelocity(cam.getDirection().mult(40));
     shootables.attachChild(cBall);
     
@@ -702,7 +717,7 @@ public class Main extends SimpleApplication {
     BitmapText hudText = new BitmapText(guiFont, false);
     hudText.setSize(guiFont.getCharSet().getRenderedSize()); // font size
     hudText.setColor(ColorRGBA.Orange);  // font color
-    hudText.setText("Welcome To Team 6 Gumball World ^_^ \n"); // the text
+    hudText.setText("Welcome To Team 6's Gumball World\n"); // the text
     hudText.setLocalTranslation(50, 575, 0); // position
     guiNode.attachChild(hudText);
     guiNode.setQueueBucket(Bucket.Gui);
@@ -762,6 +777,8 @@ public class Main extends SimpleApplication {
                 //System.out.println("You hit " + s.getName());
                 if ("Gumball Machine".equals(s.getName())){
                     System.out.println(gumballMachine.getControl(gumballMachine.class).getState());
+                    gameStatus = gumballMachine.getControl(gumballMachine.class).turnCrank();
+                    System.out.println(gameStatus); 
                     gumballMachine.getControl(gumballMachine.class).turnCrank();
                     mach_crank.playInstance();
                     //to delay release of gumball until after audio finishes
@@ -831,7 +848,7 @@ public class Main extends SimpleApplication {
                     int origGumballs = userData.getState().get("numOfGumballs");
                     userData.setState("numOfGumballs", origGumballs+1);
                 }
-                else if ("cannonball".equals(results.getCollision(0).getGeometry().getName())){
+                /*else if ("cannonball".equals(results.getCollision(0).getGeometry().getName())){
                     System.out.println("Retrieving the gumball!");
                     gBalls++;
                     //taken_gball = true;
@@ -843,7 +860,7 @@ public class Main extends SimpleApplication {
                     bulletAppState.getPhysicsSpace().remove(ball_phy);
                     results.getCollision(0).getGeometry().removeFromParent();
                     shootables.detachChild(results.getCollision(0).getGeometry());
-                }
+                }*/
             }//end hit
           }//end Click
           else if (name.equals("Refill") && !keyPressed) {
@@ -870,16 +887,16 @@ public class Main extends SimpleApplication {
                       if ("Teapot".equals(shootResults.getCollision(1).getGeometry().getName())){
                            //Teapot score +100                          
                            userData.setState("score", origScore + 100);
-                           gameStatus = "You shot at Teapot, and you got Score 100 ";
+                           gameStatus = "You hit Teapot, and you get 100 points";
                            System.out.println(gameStatus);
                       }else if("Rock Ball".equals(shootResults.getCollision(1).getGeometry().getName())){
                             //Teapot score +200
                            userData.setState("score", origScore + 200);
-                           gameStatus = "You shot at Rock Ball, and you got Score 200 ";
+                           gameStatus = "You hit Rock Ball, and you get 200 points ";
                            System.out.println(gameStatus);
                       }else if("Elephant-geom-1".equals(shootResults.getCollision(1).getGeometry().getName())){
                            userData.setState("score", origScore + 150); 
-                           gameStatus = "You shot at Elephant, and you got Score 150 ";
+                           gameStatus = "You hit Elephant, and you get 150 points ";
                            System.out.println(gameStatus);
                       }
                   }
@@ -930,6 +947,13 @@ public class Main extends SimpleApplication {
         mat_brick.setColor("Color", ColorRGBA.LightGray);
         wall.setMaterial(mat_brick);
         wall.setLocalTranslation(-18f,0f,4f);
+        
+        
+        // Make brick physical with a mass > 0.0f. */
+        brick_phy = new RigidBodyControl(0.0f);
+        wall.addControl(brick_phy);
+        bulletAppState.getPhysicsSpace().add(brick_phy);
+        
         shootables.attachChild(wall);      
   }
   
