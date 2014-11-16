@@ -13,7 +13,8 @@ public class InPocketState extends AbstractControl implements gumballState {
     }
     
     public String catchIt() {
-        return "Gumball is in your pocket.";
+        Gumball.setState(Gumball.getFiredState());
+        return "You have shot the gumball.";
     }
     
     
