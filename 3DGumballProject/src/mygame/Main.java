@@ -32,6 +32,8 @@ import java.util.Random;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Main extends SimpleApplication { 
   public static void main(String args[]) {
@@ -43,6 +45,8 @@ public class Main extends SimpleApplication {
     app.setDisplayFps(false);
   }
  
+  private Timer timer = new Timer();
+  
   // Prepare the Physics Application State (jBullet)
   private BulletAppState bulletAppState;
  
@@ -762,6 +766,7 @@ public class Main extends SimpleApplication {
       int g_color;
       boolean taken_gball = false;
       int gBalls = 0;
+      
       public void onAction(String name, boolean keyPressed, float tpf) {
           if (name.equals("Click") && !keyPressed) {
             CollisionResults results = new CollisionResults();
@@ -771,6 +776,9 @@ public class Main extends SimpleApplication {
             if (results.size() > 0) {//not missed
                 //String hit = results.getCollision(0).getGeometry().getName();
                 //System.out.println("  You hit " + hit);
+                gBall = results.getCollision(0).getGeometry();
+                gBall.addControl((Control) new gumball());
+                
                 Spatial s = results.getCollision(0).getGeometry();
                 Spatial p = s.getParent();
                 s = p.getParent();
@@ -778,8 +786,8 @@ public class Main extends SimpleApplication {
                 if ("Gumball Machine".equals(s.getName())){
                     System.out.println(gumballMachine.getControl(gumballMachine.class).getState());
                     gameStatus = gumballMachine.getControl(gumballMachine.class).turnCrank();
-                    System.out.println(gameStatus); 
-                    gumballMachine.getControl(gumballMachine.class).turnCrank();
+                    //System.out.println(gameStatus); 
+                    //gumballMachine.getControl(gumballMachine.class).turnCrank();
                     mach_crank.playInstance();
                     //to delay release of gumball until after audio finishes
                     try {
@@ -816,12 +824,16 @@ public class Main extends SimpleApplication {
                     // System.out.println(" cent(s)");
                 }
                 else if ("gumball".equals(results.getCollision(0).getGeometry().getName())){
-                    String status = "Taking gumball... \n" + "Gumball has color "
+                    String status = "Gumball in your pocket \n" + "Gumball has color "
                                     + results.getCollision(0).getGeometry().getUserData("color") 
                                     + " and value of ";
                     int gumball_score = results.getCollision(0).getGeometry().getUserData("value");
+                    
+                    //System.out.println(gBall);
                     System.out.println(status + gumball_score);
-
+                    System.out.println(gBall.getControl(gumball.class).getState());
+                    System.out.println(gBall.getControl(gumball.class).catchIt());
+                    System.out.println(gBall.getControl(gumball.class).getState());
                     //System.out.println("Taking gumball...");
                     //System.out.print("Gumball has color ");
                     //System.out.print(results.getCollision(0).getGeometry().getUserData("color"));
@@ -864,6 +876,7 @@ public class Main extends SimpleApplication {
             }//end hit
           }//end Click
           else if (name.equals("Refill") && !keyPressed) {
+              timer.cancel();
               gumballMachine.getControl(gumballMachine.class).refill(5);
               //default refill by 5 gumballs
           }//end Refill
@@ -900,7 +913,25 @@ public class Main extends SimpleApplication {
                            System.out.println(gameStatus);
                       }
                   }
-                                    
+                  gBall.getControl(gumball.class).setFiredState();
+                  System.out.println(gBall.getControl(gumball.class).getState());
+                  System.out.println(gBall.getControl(gumball.class).catchIt());
+                  
+                  System.out.println("Detaching now");
+                  
+                  System.out.println("Before delay");
+                  
+                  
+                  TimerTask action = new TimerTask(){
+                      public void run() {
+                          shootables.detachChild(cBall);
+                          System.out.println("After delay");
+                          timer.cancel();
+                      }
+                  };
+                  timer.schedule(action, 3000);
+                  //timer.cancel();
+                  
                   taken_gball = false;
               }
               else {
@@ -908,7 +939,6 @@ public class Main extends SimpleApplication {
                   gameStatus = "No cannonball. You must get a gumball first";
                   System.out.println(gameStatus);
               }
-              
           }//end Shoot
           
           
