@@ -724,7 +724,7 @@ public class Main extends SimpleApplication {
     BitmapText hudText = new BitmapText(guiFont, false);
     hudText.setSize(guiFont.getCharSet().getRenderedSize()); // font size
     hudText.setColor(ColorRGBA.Yellow);  // font colo
-    hudText.setLocalTranslation(600, 575, 0); // position
+    hudText.setLocalTranslation(10, 575, 0); // position
     guiNode.attachChild(hudText);
     guiNode.setQueueBucket(Bucket.Gui);
     return hudText;
