@@ -717,12 +717,12 @@ public class Main extends SimpleApplication {
   
   /** Display a Greeting Title on top of the game screen*/
   protected void initWelcome() {
-    guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
+    guiFont = assetManager.loadFont("Interface/Fonts/ChalkboardSE.fnt");
     BitmapText hudText = new BitmapText(guiFont, false);
     hudText.setSize(guiFont.getCharSet().getRenderedSize()); // font size
     hudText.setColor(ColorRGBA.Orange);  // font color
-    hudText.setText("Welcome To Team 6's Gumball World\n"); // the text
-    hudText.setLocalTranslation(50, 575, 0); // position
+    hudText.setText("~~Welcome To Team 6's Gumball World~~\n"); // the text
+    hudText.setLocalTranslation(300, 575, 0); // position
     guiNode.attachChild(hudText);
     guiNode.setQueueBucket(Bucket.Gui);
     
