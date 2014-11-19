@@ -18,8 +18,9 @@ public class SoldOutState extends AbstractControl implements State {
         gMach.resetAmtInSlot();
     }
     
-    public void turnCrank() {
+    public String turnCrank() {
         System.out.println("The machine is sold out! Refill it first.");
+        return "The machine is sold out! Refill it first.";
     }
     
     

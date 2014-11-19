@@ -32,6 +32,8 @@ import java.util.Random;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Main extends SimpleApplication { 
   public static void main(String args[]) {
@@ -143,6 +145,9 @@ public class Main extends SimpleApplication {
     
     makeGumballMachine(initialGBall, gBallPrice);
     makeCoins();
+    
+    //add wall and target object to shoot --------*/
+    addWallandTarget();
   }
   
   // for showing the data of the game
@@ -171,11 +176,13 @@ public class Main extends SimpleApplication {
         long time = s.getControl(ElapseGumball.class).getElapse();
         //ElapseGumball es = (ElapseGumball) s;
         //long time = es.getElapse();
-        System.out.println("gumball elapsed time:" +time );
+        //System.out.println("gumball elapsed time:" +time );
         
         //gumball disapper with time
-        if(time>20000){
+        if(time>6000){
             shootables.detachChild(s);
+            gameStatus = time + "secs have elapsed. Gumball is gone.";
+            System.out.println(gameStatus);
             //maybe add blink effects
         }
     }    
@@ -239,6 +246,7 @@ public class Main extends SimpleApplication {
   }
    
   protected Geometry makeGumball(String name, Vector3f loc, ColorRGBA color) {
+    /*for cannonballs*/
     Sphere sphere_ball = new Sphere(35, 35, 0.8f, true, false);
     sphere_ball.setTextureMode(TextureMode.Projected);
     Geometry gumball = new Geometry(name, sphere_ball);
@@ -250,6 +258,7 @@ public class Main extends SimpleApplication {
     
     ball_phy = new RigidBodyControl(0.5f);
     gumball.addControl(ball_phy);
+    //ball_phy.setLinearVelocity(cam.getDirection().mult(40));
     bulletAppState.getPhysicsSpace().add(ball_phy);
     return gumball;
   }
@@ -265,9 +274,20 @@ public class Main extends SimpleApplication {
     gumball.setLocalTranslation(x,y,z);
     gumball.scale(0.7f);
     
-    ball_phy = new RigidBodyControl(0.5f);
+    ball_phy = new RigidBodyControl(1f);
     gumball.addControl(ball_phy);
     bulletAppState.getPhysicsSpace().add(ball_phy);
+    
+    
+    //Vector3f dir = new Vector3f(0,-2,0);
+    //System.out.println(cam.getDirection());
+    int g_speed = randInt(40,60);
+    ball_phy.setLinearVelocity(cam.getDirection().mult(g_speed));
+    //shootables.attachChild(cBall);
+    
+    //
+    //ball_phy.setLinearVelocity(cam.getLocation().mult(g_speed));
+    
     
     return gumball;
   }
@@ -560,6 +580,8 @@ public class Main extends SimpleApplication {
     cBall.addControl(ball_phy);
     bulletAppState.getPhysicsSpace().add(ball_phy);
     /** Accelerate the physcial ball to shoot it. */
+    
+    
     ball_phy.setLinearVelocity(cam.getDirection().mult(40));
     shootables.attachChild(cBall);
     
@@ -699,7 +721,7 @@ public class Main extends SimpleApplication {
     BitmapText hudText = new BitmapText(guiFont, false);
     hudText.setSize(guiFont.getCharSet().getRenderedSize()); // font size
     hudText.setColor(ColorRGBA.Orange);  // font color
-    hudText.setText("Welcome To Team 6 Gumball World ^_^ \n"); // the text
+    hudText.setText("Welcome To Team 6's Gumball World\n"); // the text
     hudText.setLocalTranslation(50, 575, 0); // position
     guiNode.attachChild(hudText);
     guiNode.setQueueBucket(Bucket.Gui);
@@ -744,6 +766,8 @@ public class Main extends SimpleApplication {
       int g_color;
       boolean taken_gball = false;
       int gBalls = 0;
+      
+      
       public void onAction(String name, boolean keyPressed, float tpf) {
           if (name.equals("Click") && !keyPressed) {
             CollisionResults results = new CollisionResults();
@@ -753,13 +777,18 @@ public class Main extends SimpleApplication {
             if (results.size() > 0) {//not missed
                 //String hit = results.getCollision(0).getGeometry().getName();
                 //System.out.println("  You hit " + hit);
+                gBall = results.getCollision(0).getGeometry();
+                gBall.addControl((Control) new gumball());
+                
                 Spatial s = results.getCollision(0).getGeometry();
                 Spatial p = s.getParent();
                 s = p.getParent();
                 //System.out.println("You hit " + s.getName());
                 if ("Gumball Machine".equals(s.getName())){
                     System.out.println(gumballMachine.getControl(gumballMachine.class).getState());
-                    gumballMachine.getControl(gumballMachine.class).turnCrank();
+                    gameStatus = gumballMachine.getControl(gumballMachine.class).turnCrank();
+                    //System.out.println(gameStatus); 
+                    //gumballMachine.getControl(gumballMachine.class).turnCrank();
                     mach_crank.playInstance();
                     //to delay release of gumball until after audio finishes
                     try {
@@ -796,12 +825,16 @@ public class Main extends SimpleApplication {
                     // System.out.println(" cent(s)");
                 }
                 else if ("gumball".equals(results.getCollision(0).getGeometry().getName())){
-                    String status = "Taking gumball... \n" + "Gumball has color "
+                    String status = "Gumball in your pocket \n" + "Gumball has color "
                                     + results.getCollision(0).getGeometry().getUserData("color") 
                                     + " and value of ";
                     int gumball_score = results.getCollision(0).getGeometry().getUserData("value");
+                    
+                    //System.out.println(gBall);
                     System.out.println(status + gumball_score);
-
+                    System.out.println(gBall.getControl(gumball.class).getState());
+                    System.out.println(gBall.getControl(gumball.class).catchIt()); //change state
+                    System.out.println(gBall.getControl(gumball.class).getState());
                     //System.out.println("Taking gumball...");
                     //System.out.print("Gumball has color ");
                     //System.out.print(results.getCollision(0).getGeometry().getUserData("color"));
@@ -823,12 +856,12 @@ public class Main extends SimpleApplication {
                     System.out.println(" gumball!");
                     taken_gball = true;
                     gBalls++;
-                    System.out.println("You have " + gBalls + " gumball(s)!");
+                    //System.out.println("You have " + gBalls + " gumball(s)!");
                     // Show number of gumballs in HUD screen
                     int origGumballs = userData.getState().get("numOfGumballs");
                     userData.setState("numOfGumballs", origGumballs+1);
                 }
-                else if ("cannonball".equals(results.getCollision(0).getGeometry().getName())){
+                /*else if ("cannonball".equals(results.getCollision(0).getGeometry().getName())){
                     System.out.println("Retrieving the gumball!");
                     gBalls++;
                     //taken_gball = true;
@@ -840,7 +873,7 @@ public class Main extends SimpleApplication {
                     bulletAppState.getPhysicsSpace().remove(ball_phy);
                     results.getCollision(0).getGeometry().removeFromParent();
                     shootables.detachChild(results.getCollision(0).getGeometry());
-                }
+                }*/
             }//end hit
           }//end Click
           else if (name.equals("Refill") && !keyPressed) {
@@ -854,8 +887,60 @@ public class Main extends SimpleApplication {
                   g_color = 0;
                   gBalls--;
                   //System.out.println("You have " + gBalls + " gumball(s) left!");
-                  gameStatus = "You have " + gBalls + " gumball(s) left!";
-                  System.out.println(gameStatus);
+                  //gameStatus = "You have " + gBalls + " gumball(s) left!";
+                  //System.out.println(gameStatus);
+                                                                    
+                  /*---------- Adding for gumball shoot the target-----------------*/
+                  CollisionResults shootResults = new CollisionResults();
+                  Ray shootRay = new Ray(cam.getLocation(), cam.getDirection());
+                  shootables.collideWith(shootRay, shootResults);
+                  if(shootResults.size()>1)
+                  {
+                      int origScore = userData.getState().get("score");
+                      if ("Teapot".equals(shootResults.getCollision(1).getGeometry().getName())){
+                           //Teapot score +100                          
+                           userData.setState("score", origScore + 100);
+                           gameStatus = "You hit Teapot, and you get 100 points";
+                           System.out.println(gameStatus);
+                      }else if("Rock Ball".equals(shootResults.getCollision(1).getGeometry().getName())){
+                            //Teapot score +200
+                           userData.setState("score", origScore + 200);
+                           gameStatus = "You hit Rock Ball, and you get 200 points ";
+                           System.out.println(gameStatus);
+                      }else if("Elephant-geom-1".equals(shootResults.getCollision(1).getGeometry().getName())){
+                           userData.setState("score", origScore + 150); 
+                           gameStatus = "You hit Elephant, and you get 150 points ";
+                           System.out.println(gameStatus);
+                      }
+                  }
+                  
+                  /*if (gBall != null) {
+                      gBall.getControl(gumball.class).catchIt();
+                      System.out.println(gBall.getControl(gumball.class).getState());
+                      System.out.println(gBall.getControl(gumball.class).catchIt());
+                  }
+                  else {*/
+                      cBall.addControl((Control) new gumball());
+                      cBall.getControl(gumball.class).setFiredState();
+                      System.out.println(cBall.getControl(gumball.class).catchIt());
+                      System.out.println(cBall.getControl(gumball.class).getState());
+                  //}
+                  
+                  System.out.println("Detaching now");
+                  
+                  //System.out.println("Before delay");
+                  
+                  final Timer timer = new Timer();
+                  TimerTask action = new TimerTask(){
+                      public void run() {
+                          shootables.detachChild(cBall);
+                          System.out.println("Gumball is gone");
+                          timer.cancel(); //cancel timer
+                      }
+                  };
+                  timer.schedule(action, 3000);
+                  //timer.cancel();
+                  
                   taken_gball = false;
               }
               else {
@@ -863,7 +948,6 @@ public class Main extends SimpleApplication {
                   gameStatus = "No cannonball. You must get a gumball first";
                   System.out.println(gameStatus);
               }
-              
           }//end Shoot
           
           
@@ -871,6 +955,46 @@ public class Main extends SimpleApplication {
        }//end onAction
   };//end ActionListener
   
+  /******* add the wall and target for shooting **********/
+  protected void addWallandTarget() {
 
+      //For Factory Method Pattern 
+      ConcreteCreator concreteCreator = new ConcreteCreator(assetManager,shootables);
+
+      //get an object of Teapot and call its makeProduct method.
+      Product teapot = concreteCreator.getProduct("TEAPOT");
+      //call makeProduct method of Teapot
+      teapot.makeProduct();
+
+      //get an object of Sphere and call its makeProduct method.
+      Product sphere1 = concreteCreator.getProduct("SPHERE");
+      //call makeProduct method of Sphere
+      sphere1.makeProduct();
+      
+      //get an object of Elephant and call its makeProduct method.
+      Product elephant = concreteCreator.getProduct("ELEPHANT");
+      //call makeProduct method of Elephant
+      elephant.makeProduct();
+
+      // Create a wall with a simple texture from test_data
+        Box box3 = new Box(0.8f,5f,8f);
+        Spatial wall = new Geometry("Box", box3 );
+        Material mat_brick = new Material( 
+            assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        mat_brick.setTexture("ColorMap", 
+            assetManager.loadTexture("Textures/Terrain/BrickWall/BrickWall_normal.jpg"));
+        mat_brick.setColor("Color", ColorRGBA.LightGray);
+        wall.setMaterial(mat_brick);
+        wall.setLocalTranslation(-18f,0f,4f);
+        
+        
+        // Make brick physical with a mass > 0.0f. */
+        brick_phy = new RigidBodyControl(0.0f);
+        wall.addControl(brick_phy);
+        bulletAppState.getPhysicsSpace().add(brick_phy);
+        
+        shootables.attachChild(wall);      
+  }
+  
   
 }//end Main class
