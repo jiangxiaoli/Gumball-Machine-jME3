@@ -10,8 +10,8 @@ public class InfoCenter implements Observer{
     
     public InfoCenter( userInfo theSubject){
         this.subject = theSubject;
-        observerState = "Score: " + 0 + "\n" + "Num of Gumballs: " 
-                + 0 + "\n" + "Coin Value In Pocket: " + 0 + "c\n";
+        observerState = "Score: " + 0 + "\n" + "Gumballs Caught: "
+                + 0 + "\n" + "Money: " + 0 + "c\n";
     }
     
     public void update() {
@@ -19,8 +19,8 @@ public class InfoCenter implements Observer{
         Integer score = map.get("score");
         Integer coinAmt = map.get("coinAmt");
         Integer numOfGumballs = map.get("numOfGumballs");
-        observerState = "Score: " + score + "\n" + "Num of Gumballs: " 
-                + numOfGumballs + "\n" + "Coin Value In Pocket: " + coinAmt + "c\n"; 
+        observerState = "Score: " + score + "\n" + "Gumballs Caught: "
+                + numOfGumballs + "\n" + "Money: " + coinAmt + "c\n";
         //System.out.println("update:" + observerState);
     }
    

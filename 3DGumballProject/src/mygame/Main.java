@@ -730,7 +730,7 @@ public class Main extends SimpleApplication {
   
   /*Display the game status*/
   protected BitmapText initSysStas() {
-    guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
+    guiFont = assetManager.loadFont("Interface/Fonts/ChalkboardSE.fnt");
     BitmapText hudText = new BitmapText(guiFont, false);
     hudText.setSize(guiFont.getCharSet().getRenderedSize()); // font size
     hudText.setColor(ColorRGBA.Yellow);  // font colo
@@ -742,7 +742,7 @@ public class Main extends SimpleApplication {
   
   /*Display the player's information*/
   protected BitmapText initPlayerInfo(){
-    guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
+    guiFont = assetManager.loadFont("Interface/Fonts/ChalkboardSE.fnt");
     BitmapText hudText = new BitmapText(guiFont, false);
     hudText.setSize(guiFont.getCharSet().getRenderedSize()); // font size
     hudText.setColor(ColorRGBA.Yellow);  // font colo
