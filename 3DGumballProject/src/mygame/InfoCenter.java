@@ -10,7 +10,7 @@ public class InfoCenter implements Observer{
     
     public InfoCenter( userInfo theSubject){
         this.subject = theSubject;
-        observerState = "Score: " + 0 + "\n" + "Gumballs Caught: "
+        observerState = "Score: " + 0 + "\n" + "Total Gumballs Caught: "
                 + 0 + "\n" + "Money: " + 0 + "c\n";
     }
     

@@ -61,7 +61,7 @@ public class Main extends SimpleApplication {
   private BitmapText sysStatusInfoScreen; // for showing the system status
   private userInfo userData;
   private InfoCenter infoCenter;
-  private String gameStatus;
+  private String gameStatus = "";
   
   /// Prepare geometries and physical nodes for gumballs, floor and cube.
   private RigidBodyControl    ball_phy;
@@ -181,7 +181,7 @@ public class Main extends SimpleApplication {
         //gumball disapper with time
         if(time>6000){
             shootables.detachChild(s);
-            gameStatus = time + "secs have elapsed. Gumball is gone.";
+            gameStatus = "Sorry, gumball not caught within " + time/1000 + " secs";
             System.out.println(gameStatus);
             //maybe add blink effects
         }
@@ -198,6 +198,7 @@ public class Main extends SimpleApplication {
       initAudio();
       initWall();
       initWelcome();
+      initSysCtrls();
       userInfoScreen = initPlayerInfo();
       sysStatusInfoScreen = initSysStas();
       intiUserInfo();
@@ -720,20 +721,34 @@ public class Main extends SimpleApplication {
     guiFont = assetManager.loadFont("Interface/Fonts/ChalkboardSE.fnt");
     BitmapText hudText = new BitmapText(guiFont, false);
     hudText.setSize(guiFont.getCharSet().getRenderedSize()); // font size
-    hudText.setColor(ColorRGBA.Orange);  // font color
-    hudText.setText("~~Welcome To Team 6's Gumball World~~\n"); // the text
-    hudText.setLocalTranslation(300, 575, 0); // position
+    hudText.setColor(ColorRGBA.White);  // font color
+    hudText.setText("Team 6 Gumball World\n"); // the text
+    hudText.setLocalTranslation(570, 575, 0); // position
     guiNode.attachChild(hudText);
     guiNode.setQueueBucket(Bucket.Gui);
     
   }
+  
+  /*Display game controls*/
+  protected void initSysCtrls() {
+    guiFont = assetManager.loadFont("Interface/Fonts/ChalkboardSE.fnt");
+    BitmapText hudText = new BitmapText(guiFont, false);
+    hudText.setSize(guiFont.getCharSet().getRenderedSize()); // font size
+    hudText.setColor(ColorRGBA.Green);  // font color
+    hudText.setText("Controls:\nClick (grab)\nSpace (shoot)\nR (refill)"); // the text
+    hudText.setLocalTranslation(660,120,0); // position
+    guiNode.attachChild(hudText);
+    guiNode.setQueueBucket(Bucket.Gui);
+    
+  }
+  
   
   /*Display the game status*/
   protected BitmapText initSysStas() {
     guiFont = assetManager.loadFont("Interface/Fonts/ChalkboardSE.fnt");
     BitmapText hudText = new BitmapText(guiFont, false);
     hudText.setSize(guiFont.getCharSet().getRenderedSize()); // font size
-    hudText.setColor(ColorRGBA.Yellow);  // font colo
+    hudText.setColor(ColorRGBA.Cyan);  // font color
     hudText.setLocalTranslation(10, 60, 0); // position
     guiNode.attachChild(hudText);
     guiNode.setQueueBucket(Bucket.Gui);
@@ -745,7 +760,7 @@ public class Main extends SimpleApplication {
     guiFont = assetManager.loadFont("Interface/Fonts/ChalkboardSE.fnt");
     BitmapText hudText = new BitmapText(guiFont, false);
     hudText.setSize(guiFont.getCharSet().getRenderedSize()); // font size
-    hudText.setColor(ColorRGBA.Yellow);  // font colo
+    hudText.setColor(ColorRGBA.Yellow);  // font color
     hudText.setLocalTranslation(10, 575, 0); // position
     guiNode.attachChild(hudText);
     guiNode.setQueueBucket(Bucket.Gui);
@@ -816,22 +831,20 @@ public class Main extends SimpleApplication {
                     //remove coin from scene
                     shootables.detachChild(p);
                     coin_slot.playInstance();
-                    gameStatus = "Machine has: " 
-                                 + gumballMachine.getControl(gumballMachine.class).getPayment()
-                                 + " cent(s)";
+                    gameStatus = gumballMachine.getControl(gumballMachine.class).getPayment()
+                                 + " cent(s) inserted";
                     System.out.println(gameStatus); 
                     // System.out.print("Machine has: ");
                     // System.out.print(gumballMachine.getControl(gumballMachine.class).getPayment());
                     // System.out.println(" cent(s)");
                 }
                 else if ("gumball".equals(results.getCollision(0).getGeometry().getName())){
-                    String status = "Gumball in your pocket \n" + "Gumball has color "
-                                    + results.getCollision(0).getGeometry().getUserData("color") 
-                                    + " and value of ";
+                    String status = "Caught " + results.getCollision(0).getGeometry().getUserData("color") 
+                                    + " gumball +";
                     int gumball_score = results.getCollision(0).getGeometry().getUserData("value");
                     
                     //System.out.println(gBall);
-                    System.out.println(status + gumball_score);
+                    System.out.println(status + gumball_score + " points");
                     System.out.println(gBall.getControl(gumball.class).getState());
                     System.out.println(gBall.getControl(gumball.class).catchIt()); //change state
                     System.out.println(gBall.getControl(gumball.class).getState());
@@ -843,7 +856,7 @@ public class Main extends SimpleApplication {
                     
 
                     // change the Hud text in the playing screen
-                    gameStatus = status + gumball_score;
+                    gameStatus = status + gumball_score + " points";
                     int origScore = userData.getState().get("score");
                     userData.setState("score", origScore + gumball_score);
 
@@ -878,6 +891,7 @@ public class Main extends SimpleApplication {
           }//end Click
           else if (name.equals("Refill") && !keyPressed) {
               gumballMachine.getControl(gumballMachine.class).refill(5);
+              gameStatus = "Refilling machine... +5 gumballs";
               //default refill by 5 gumballs
           }//end Refill
           else if (name.equals("Shoot") && !keyPressed) {
@@ -900,18 +914,22 @@ public class Main extends SimpleApplication {
                       if ("Teapot".equals(shootResults.getCollision(1).getGeometry().getName())){
                            //Teapot score +100                          
                            userData.setState("score", origScore + 100);
-                           gameStatus = "You hit Teapot, and you get 100 points";
+                           gameStatus = "Hit Teapot +100 points";
                            System.out.println(gameStatus);
                       }else if("Rock Ball".equals(shootResults.getCollision(1).getGeometry().getName())){
                             //Teapot score +200
                            userData.setState("score", origScore + 200);
-                           gameStatus = "You hit Rock Ball, and you get 200 points ";
+                           gameStatus = "Hit Rock Ball +200 points";
                            System.out.println(gameStatus);
                       }else if("Elephant-geom-1".equals(shootResults.getCollision(1).getGeometry().getName())){
                            userData.setState("score", origScore + 150); 
-                           gameStatus = "You hit Elephant, and you get 150 points ";
+                           gameStatus = "Hit Elephant +150 points";
                            System.out.println(gameStatus);
                       }
+                  }
+                  else {
+                      gameStatus = "Sorry, no hit!";
+                      System.out.println(gameStatus);
                   }
                   
                   /*if (gBall != null) {
@@ -926,7 +944,7 @@ public class Main extends SimpleApplication {
                       System.out.println(cBall.getControl(gumball.class).getState());
                   //}
                   
-                  System.out.println("Detaching now");
+                  //System.out.println("Detaching now");
                   
                   //System.out.println("Before delay");
                   
@@ -945,7 +963,7 @@ public class Main extends SimpleApplication {
               }
               else {
                   //System.out.println("No cannonball. You must get a gumball first");
-                  gameStatus = "No cannonball. You must get a gumball first";
+                  gameStatus = "Cannot shoot. Get a gumball first";
                   System.out.println(gameStatus);
               }
           }//end Shoot
